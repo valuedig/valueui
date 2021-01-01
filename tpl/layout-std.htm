@@ -1,0 +1,68 @@
+<div class="" id="valueui-layout-navbar"></div>
+
+<div id="valueui-layout-module-navbar" class="valueui-base-hide">
+    <div class="container-fluid">
+        <ul
+            id="valueui-layout-module-navbar-items"
+            class="valueui-layout-module-nav valueui-block-inline"
+        ></ul>
+        <ul
+            id="valueui-layout-module-navbar-optools"
+            class="valueui-layout-module-nav valueui-block-inline"
+        ></ul>
+    </div>
+</div>
+
+<div id="valueui-layout-main">loading</div>
+
+<footer id="valueui-layout-footer"></footer>
+
+<script type="text/html" id="valueui-layout-navbar-tpl">
+    <nav class="navbar navbar-dark bg-dark navbar-expand-md">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">
+                {[? it.navbar_brand.logo_url]}
+                <img
+                    src="{[=it.navbar_brand.logo_url]}"
+                    alt=""
+                    height="24"
+                    class="d-inline-block align-top"
+                />
+                {[?]} {[?
+                it.navbar_brand.text]}{[=it.navbar_brand.text]}{[??]}Home{[?]}
+            </a>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul
+                    class="navbar-nav me-auto mb-2 mb-lg-0"
+                    id="valueui-layout-navbar-nav-items"
+                >
+                    {[~ it.navbar_nav.items : v]}
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {[? v.path == it.navbar_nav.active]}active{[?]}"
+                            aria-current="page"
+                            href="#{[=v.path]}"
+                            {[?
+                            v.onclick]}onclick="{[=v.onclick]}{[?]}"
+                            >{[=v.title]}</a
+                        >
+                    </li>
+                    {[~]}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</script>
