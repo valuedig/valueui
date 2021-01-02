@@ -736,11 +736,9 @@
     };
 
     alert.Open = function (type, msg, options) {
-        console.log(msg);
-        // console.log("A");
-        if (alert.modal_instance !== null) {
-            // alert.modal_instance.dispose();
-            alert.modal_instance = null;
+        if (valueui.alert.modal_instance !== null) {
+            valueui.alert.modal_instance.dispose();
+            valueui.alert.modal_instance = null;
         }
         options = options || {};
 
@@ -764,15 +762,16 @@
 
         var close_ctn = "";
         if (true) {
-            close_ctn = `<button type="button" class="btn-close" onlick="valueui.alert.Close()"></button>`;
+            close_ctn =
+                '<button type="button" class="btn-close" data-bs-dismiss="modal" _onclick="valueui.alert.Close()"></button>';
         }
 
         var btn_ctn = "";
         if (options.buttons && options.buttons.length > 0) {
             btn_ctn =
-                `<div class="modal-footer">` +
+                '<div class="modal-footer">' +
                 valueui.template.buttonRender(options.buttons) +
-                `</div>`;
+                "</div>";
         }
 
         if (!options.title) {
@@ -780,18 +779,11 @@
         }
 
         var ctn = _sprintf(
-            `<div id="valueui-alert" class="modal fade %s">
-<div class="modal-dialog">
-<div class="modal-content">
-  <div class="modal-header">
-    <h5 class="modal-title">%s</h5>
-    %s
-  </div>
-  <div class="modal-body" id="valueui-alert-msg">%s</div>
-  %s
-</div>
-</div>
-</div>`,
+            '<div id="valueui-alert" class="modal fade %s">' +
+                '<div class="modal-dialog"><div class="modal-content">' +
+                '  <div class="modal-header"><h5 class="modal-title">%s</h5>%s</div>' +
+                '  <div class="modal-body" id="valueui-alert-msg">%s</div>%s' +
+                "</div></div></div>",
             type_ui,
             options.title,
             close_ctn,
@@ -804,22 +796,27 @@
 
         bootstrap.Modal.Default.keyboard = true;
 
-        alert.modal_instance = new bootstrap.Modal(document.getElementById("valueui-alert"));
+        var elem = document.getElementById("valueui-alert");
 
-        alert.modal_instance.show();
+        valueui.alert.modal_instance = new bootstrap.Modal(elem);
+
+        valueui.alert.modal_instance.show();
     };
 
     alert.Close = function (cb) {
-        console.log(alert.modal_instance);
-        if (alert.modal_instance) {
-            alert.modal_instance.hide();
-            alert.modal_instance.dispose();
-            alert.modal_instance = null;
+        var elem = document.getElementById("valueui-alert");
+        if (!elem) {
+            return;
         }
+        if (valueui.alert.modal_instance !== null) {
+            valueui.alert.modal_instance.hide();
+            valueui.alert.modal_instance.dispose();
+        }
+        valueui.alert.modal_instance = null;
         $("#valueui-alert").remove();
         $(".modal-backdrop").remove();
 
-        if (cb) {
+        if (typeof cb === "function") {
             cb();
         }
     };
@@ -1182,7 +1179,7 @@
             }
 
             ctn += _sprintf(
-                `<li class='nav-item'><a class='nav-link %s valueui-nav-item' href='#%s' %s>%s</a></li>`,
+                '<li class="nav-item"><a class="nav-link %s valueui-nav-item" href="#%s" %s>%s</a></li>',
                 items[i].style,
                 items[i].uri,
                 items[i]._onclick,
