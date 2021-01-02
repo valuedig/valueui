@@ -52,7 +52,7 @@
                     {[~ it.navbar_nav.items : v]}
                     <li class="nav-item">
                         <a
-                            class="nav-link {[? v.path == it.navbar_nav.active]}active{[?]}"
+                            class="nav-link valueui-nav-item {[? v.path === it.navbar_nav.active]}active{[?]}"
                             aria-current="page"
                             href="#{[=v.path]}"
                             {[?
