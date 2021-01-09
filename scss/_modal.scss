@@ -1,0 +1,124 @@
+#valueui-modal-bg {
+    position: fixed;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+#valueui-modal {
+    z-index: 2000 !important;
+    position: fixed;
+    display: none;
+    background-color: #fff;
+    // border: 3px solid #777;
+    // -moz-border-radius: 5px;
+    // -webkit-border-radius: 5px;
+    // border-radius: 5px;
+    box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
+}
+#valueui-modal a {
+    text-decoration: none;
+}
+.valueui-modal-header {
+    padding: 5px 10px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+    color: #fff;
+    background-color: #343a40;
+    vertical-align: middle !important;
+}
+.valueui-modal-header .close {
+    float: right;
+    color: #fff;
+    opacity: 0.9;
+    text-shadow: none !important;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 30px;
+}
+.valueui-modal-header .close:hover {
+    opacity: 0.8;
+}
+
+#valueui-modal .title {
+    padding: 10px 0;
+    margin-right: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.valueui-modal-body {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+}
+.valueui-modal-body-page {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 16384px;
+    cursor: default;
+}
+.valueui-modal-body-pagelet {
+    display: inline-block;
+    position: relative;
+    overflow-y: auto;
+    top: 0;
+    float: left;
+}
+.valueui-modal-footer {
+    clear: both;
+    margin: 10px;
+    height: 2rem;
+    text-align: right;
+    *zoom: 1;
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.valueui-modal-footer:before,
+.valueui-modal-footer:after {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+.valueui-modal-footer:after {
+    clear: both;
+}
+.valueui-modal-footer .btn {
+    padding: 0.25rem 0.5rem;
+    height: 2rem !important;
+    font-size: 0.875rem !important;
+}
+.valueui-modal-footer .btn + .btn {
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+.valueui-modal-footer .btn-group .btn + .btn {
+    margin-left: -1px;
+}
+.valueui-modal-footer .btn-block + .btn-block {
+    margin-left: 0;
+}
+#valueui-modal-footer-alert {
+    clear: both;
+    border: 0px;
+    border-radius: 0px;
+    margin: 0;
+    padding: calc(0.25rem + 10px);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

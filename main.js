@@ -23,7 +23,7 @@
     }
 
     var valueui = (global.valueui = {
-        version: "0.0.1",
+        version: "0.0.2",
         basepath: "/",
         inited: false,
         cookie: {},
@@ -46,7 +46,16 @@
         alert: {
             modal_instance: null,
         },
-        modal: {},
+        modal: {
+            version: "2.0",
+            current: null,
+            CurOptions: null,
+            nextHistory: null,
+            width: 600,
+            height: 400,
+            position: "center",
+            data: {},
+        },
         utilx: {},
         sessionData: {},
         job: {
@@ -55,14 +64,20 @@
         },
     });
 
+    var _modal = valueui.modal;
+
     var boot = function (cb) {
-        if (!valueui.inited) {
-            seajs.config({
-                base: valueui.basepath,
-                alias: {},
-            });
-            valueui.inited = true;
+        if (valueui.inited) {
+            if (typeof cb === "function") {
+                cb();
+            }
+            return;
         }
+        seajs.config({
+            base: valueui.basepath,
+            alias: {},
+        });
+        valueui.inited = true;
 
         var mods = [
             "valueui/zeptojs/zepto.js",
@@ -71,11 +86,24 @@
             "valueui/main.css",
         ];
 
-        if (typeof cb === "function") {
-            seajs.use(mods, cb);
-        } else {
-            sejs.use(mods);
-        }
+        seajs.use(mods, function () {
+            $(document).keyup(function (e) {
+                if (e.key === "Escape") {
+                    if (_modal.current) {
+                        var pid = _modal.PrevId();
+                        if (pid) {
+                            _modal.Prev();
+                        } else {
+                            _modal.Close();
+                        }
+                    }
+                }
+            });
+
+            if (typeof cb === "function") {
+                cb();
+            }
+        });
     };
 
     valueui.Use = function () {
@@ -244,6 +272,9 @@
     };
 
     Date.prototype.utilxTimeFormat = function (format) {
+        if (!format) {
+            return "";
+        }
         var date = this;
         return format.replace(/(\\?)(.)/g, function (_, esc, chr) {
             return esc === "" && valueui.utilx.timeChars[chr]
@@ -368,6 +399,29 @@
             }
         }
         return false;
+    };
+
+    utilx.VersionCompare = function (v1, v2) {
+        if (typeof v1 !== "string") {
+            return 0;
+        }
+        if (typeof v2 !== "string") {
+            return 0;
+        }
+        v1 = v1.split(".");
+        v2 = v2.split(".");
+        const k = Math.min(v1.length, v2.length);
+        for (let i = 0; i < k; ++i) {
+            v1[i] = parseInt(v1[i], 10);
+            v2[i] = parseInt(v2[i], 10);
+            if (v1[i] > v2[i]) {
+                return 1;
+            }
+            if (v1[i] < v2[i]) {
+                return -1;
+            }
+        }
+        return v1.length == v2.length ? 0 : v1.length < v2.length ? -1 : 1;
     };
 
     utilx.CryptoMd5 = function (str) {
@@ -720,28 +774,7 @@
     };
 
     //
-    var alert = valueui.alert;
-
-    alert.InnerRefresh = function (obj, type, msg) {
-        if (type == "") {
-            $(obj).hide();
-        } else {
-            $(obj)
-                .removeClass()
-                .addClass("alert " + type)
-                .html(msg)
-                .fadeOut(200)
-                .fadeIn(200);
-        }
-    };
-
-    alert.Open = function (type, msg, options) {
-        if (valueui.alert.modal_instance !== null) {
-            valueui.alert.modal_instance.dispose();
-            valueui.alert.modal_instance = null;
-        }
-        options = options || {};
-
+    var _alertTypeClassName = function(type) {
         var type_ui = "info";
         switch (type) {
             case "ok":
@@ -759,6 +792,32 @@
             default:
                 type_ui = "info";
         }
+        return type_ui;
+    }
+    
+    var alert = valueui.alert;
+
+    alert.InnerRefresh = function (obj, type, msg) {
+        if (type == "") {
+            $(obj).hide();
+        } else {
+            $(obj)
+                .removeClass()
+                .addClass("alert " + type)
+                .html(msg)
+                .fadeOut(200)
+                .fadeIn(200);
+        }
+    };
+
+    alert.Open = function (type, msg, options) {
+        if (alert.modal_instance !== null) {
+            // alert.modal_instance.dispose();
+            alert.modal_instance = null;
+        }
+        options = options || {};
+
+        var type_ui = _alertTypeClassName(type);
 
         var close_ctn = "";
         if (true) {
@@ -804,9 +863,10 @@
     };
 
     alert.Close = function (cb) {
-        var elem = document.getElementById("valueui-alert");
-        if (!elem) {
-            return;
+        if (alert.modal_instance) {
+            alert.modal_instance.hide();
+            alert.modal_instance.dispose();
+            alert.modal_instance = null;
         }
         if (valueui.alert.modal_instance !== null) {
             valueui.alert.modal_instance.hide();
@@ -823,6 +883,541 @@
 
     alert.Error = function (msg) {
         alert.Open("error", msg);
+    };
+
+    alert.InnerShow = function (obj, type, msg) {
+        if (type == "") {
+            $(obj).hide();
+        } else {
+            var type_ui = _alertTypeClassName(type);
+            $(obj)
+                .removeClass()
+                .addClass("alert alert-" + type_ui)
+                .html(msg)
+                .fadeIn(200);
+        }
+    };
+
+
+    _modal.Open = function (options) {
+        options = options || {};
+
+        if (typeof options.success !== "function") {
+            options.success = function () {};
+        }
+
+        if (typeof options.error !== "function") {
+            options.error = function () {};
+        }
+
+        if (!options.position) {
+            options.position = _modal.position;
+        } else if (options.position != "center" && options.position != "cursor") {
+            options.position = "center";
+        }
+
+        if (options.id === undefined) {
+            options.id = "valueui-modal-single";
+        }
+
+        if (options.close === undefined) {
+            options.close = true;
+        }
+
+        if (options.buttons === undefined) {
+            options.buttons = [];
+        }
+
+        // $("#"+ modalid).remove();
+
+        if (options.backEnable !== false) {
+            options.backEnable = true;
+        }
+
+        if (_modal.current != null && options.backEnable) {
+            options.prevModalId = _modal.current;
+
+            _modal.data[_modal.current].nextModalId = options.id;
+
+            options.buttons.unshift({
+                onclick: "valueui.modal.Prev()",
+                title: valueui.lang.T("Back"),
+                style: "button is-dark btn-dark valueui-base-pull-left",
+            });
+        }
+
+        _modal.data[options.id] = options;
+
+        if (typeof options.callback === "function") {
+            _modal.switch(options.id, options.callback);
+        } else {
+            _modal.switch(options.id);
+        }
+    };
+
+    _modal.switch = function (modalid, cb) {
+        var options = _modal.data[modalid];
+        if (options.id === undefined) {
+            return;
+        }
+
+        if (_modal.current == null) {
+            $("#" + modalid).remove();
+        }
+
+        var firstload = false;
+        if (!_modal.current) {
+            $("#valueui-modal").remove();
+            $("body").append(
+                '<div id="valueui-modal">\
+            <div class="valueui-modal-header" style="display:none">\
+                <span id="valueui-modal-header-title" class="title"></span>\
+                <span class="close" onclick="valueui.modal.Close()">×</span>\
+            </div>\
+            <div class="valueui-modal-body"><div id="valueui-modal-body-page" class="valueui-modal-body-page"></div></div>\
+            <div id="valueui-modal-footer-alert" style="display:none"></div>\
+            <div id="valueui-modal-footer" class="valueui-modal-footer" style="display:none"></div>\
+            </div>'
+            );
+
+            firstload = true;
+        } else {
+            $(".valueui-modal-footer").empty();
+        }
+
+        if (options.title) {
+            $(".valueui-modal-header").css({
+                display: "block",
+            });
+        } else {
+            $(".valueui-modal-header").css({
+                display: "none",
+            });
+        }
+
+        if (!options.close) {
+            $(".valueui-modal-header").find(".close").css({
+                display: "none",
+            });
+        }
+
+        var buttons = _modal.buttonRender(options.buttons);
+        if (buttons.length > 10) {
+            $(".valueui-modal-footer").css({
+                display: "inline-block",
+            });
+        }
+
+        if (!document.getElementById(modalid)) {
+            var body =
+                "<div id='" + modalid + "' class='valueui-modal-body-pagelet valueui-scroll'>";
+
+            if (options.tplsrc !== undefined) {
+                if (options.data !== undefined) {
+                    var tempFn = doT.template(options.tplsrc);
+                    body += tempFn(options.data);
+                } else {
+                    body += options.tplsrc;
+                }
+            } else if (options.tplid !== undefined) {
+                var elem = document.getElementById(options.tplid);
+                if (!elem) {
+                    return "";
+                }
+
+                var source = elem.value || elem.innerHTML;
+
+                if (options.data !== undefined) {
+                    var tempFn = doT.template(source);
+                    body += tempFn(options.data);
+                } else {
+                    body += source;
+                }
+            } else if (options.tpluri) {
+                if (/\?/.test(options.tpluri)) {
+                    options.tpluri += "&_=";
+                } else {
+                    options.tpluri += "?_=";
+                }
+                options.tpluri += Math.random();
+
+                $.ajax({
+                    url: options.tpluri,
+                    type: "GET",
+                    timeout: 10000,
+                    async: false,
+                    success: function (rsp) {
+                        if (options.data !== undefined) {
+                            var tempFn = doT.template(rsp);
+                            body += tempFn(options.data);
+                        } else {
+                            body += rsp;
+                        }
+                    },
+                    error: function () {
+                        body += "Failed on load template";
+                    },
+                });
+            }
+
+            body += "</div>";
+
+            if (options.i18n) {
+                body = valueui.lang.TR(body);
+            }
+
+            $("#valueui-modal-body-page").append(body);
+        }
+
+        $("#" + modalid).css({
+            "z-index": "-100",
+            display: "block",
+        });
+
+        if (!$("#valueui-modal").is(":visible")) {
+            $("#valueui-modal")
+                .css({
+                    "z-index": "-100",
+                })
+                .css({
+                    display: "block",
+                });
+        }
+
+        var bw = $(window).width(),
+            bh = $(window).height(),
+            mh = $("#" + modalid).height(),
+            mhh = $(".valueui-modal-header").height(),
+            mfh = $(".valueui-modal-footer").height() + 20;
+
+        //
+        if (!options.width_min) {
+            options.width_min = 200;
+        } else {
+            options.width_min = parseInt(options.width_min);
+            if (options.width_min < 200) {
+                options.width_min = 200;
+            }
+        }
+        if (!options.width && _modal.width) {
+            options.width = _modal.width;
+        } else if (options.width == "max") {
+            options.width = 10000;
+        }
+        options.width = parseInt(options.width);
+        if (options.width < 1) {
+            options.width = $("#" + modalid).outerWidth(true);
+        }
+        if (options.width + 100 > bw) {
+            options.width = bw - 100;
+        }
+        if (options.width < options.width_min) {
+            options.width = options.width_min;
+        }
+
+        //
+        if (!options.height_min) {
+            options.height_min = 100;
+        } else {
+            options.height_min = parseInt(options.height_min);
+            if (options.height_min < 100) {
+                options.height_min = 100;
+            }
+        }
+        if (!options.height && _modal.height) {
+            options.height = _modal.height;
+        } else if (options.height == "auto") {
+            options.height = mh + mhh + mfh + 10;
+        } else if (options.height == "max") {
+            options.height = 2000;
+        }
+        options.height = parseInt(options.height);
+        // console.log(options.height);
+        if (options.height < 100) {
+            options.height = mh + mhh + mfh;
+        }
+        if (options.height + 100 > bh) {
+            options.height = bh - 100;
+        }
+        if (options.height < options.height_min) {
+            options.height = options.height_min;
+        }
+        // console.log("width " + options.width + ", min " + options.width_min);
+
+        //
+        var top = 0,
+            left = 0;
+
+        if (options.position == "center") {
+            left = bw / 2 - options.width / 2;
+            top = bh / 2 - options.height / 2;
+        } else {
+            var p = l4i.PosGet();
+            if (p.left / bw > 0.66 && options.width < bw) {
+                left = p.left - options.width + 10;
+            } else {
+                left = p.left - 10;
+            }
+            top = p.top - 10;
+        }
+        if (left > bw - options.width - 10) {
+            left = bw - options.width - 10;
+        }
+        if (top + options.height + 40 > bh) {
+            top = bh - options.height - 40;
+        }
+        if (top < 10) {
+            top = 10;
+        }
+
+        $("#valueui-modal").css({
+            height: options.height + "px",
+            width: options.width + "px",
+        });
+
+        options.inlet_width = options.width - 20;
+        options.inlet_height = options.height - mhh - mfh - 20;
+
+        var body_margin = "10px";
+        if (buttons.length > 10) {
+            body_margin = "10px 10px 0 10px";
+            options.inlet_height += 10;
+        }
+
+        $(".valueui-modal-body").css({
+            margin: body_margin,
+            width: options.inlet_width + "px",
+            height: options.inlet_height + "px",
+        });
+
+        if (!$("#valueui-modal-bg").is(":visible")) {
+            $("#valueui-modal-bg").remove();
+            $("body").append('<div id="valueui-modal-bg" class="valueui-base-hide"></div>');
+            $("#valueui-modal-bg").fadeIn(150);
+        }
+
+        $("#" + modalid).css({
+            "z-index": 1,
+            width: options.inlet_width + "px", // options.width +"px",
+            height: options.inlet_height + "px",
+        });
+
+        var pp = $("#" + modalid).position();
+        var mov = pp.left;
+        if (mov < 0) {
+            mov = 0;
+        }
+
+        if (firstload) {
+            $("#valueui-modal")
+                .css({
+                    position: "fixed",
+                    "z-index": 200,
+                    top: top + "px",
+                    left: left + "px",
+                    // }).hide().slideDown(100, function() {
+                })
+                .show(0, function () {
+                    // _modal.Resize();
+                    // options.success();
+                });
+
+            if (options.title) {
+                $(".valueui-modal-header .title").text(options.title);
+            }
+
+            if (buttons.length > 10) {
+                $(".valueui-modal-footer").html(buttons);
+            }
+        } else {
+            $("#valueui-modal").animate(
+                {
+                    position: "fixed",
+                    "z-index": 200,
+                    top: top + "px",
+                    left: left + "px",
+                },
+                50,
+                function () {
+                    // _modal.Resize();
+                    // options.success();
+                }
+            );
+        }
+
+        $(".valueui-modal-body-page").animate(
+            {
+                top: 0,
+                left: "-" + mov + "px",
+            },
+            300,
+            function () {
+                if (!firstload) {
+                    if (options.title !== undefined) {
+                        $(".valueui-modal-header .title").text(options.title);
+                    }
+
+                    if (buttons.length > 10) {
+                        $(".valueui-modal-footer").html(buttons);
+                    }
+                }
+
+                $("#" + modalid + " .inputfocus").focus();
+
+                _modal.Resize();
+
+                if (options.success) {
+                    options.success();
+
+                    if (_modal.data[modalid]) {
+                        _modal.data[modalid].success = null;
+                    }
+                }
+
+                if (cb) {
+                    cb();
+                }
+            }
+        );
+
+        _modal.current = options.id;
+        _modal.CurOptions = options;
+        _modal.width = options.width;
+        _modal.height = options.height;
+        _modal.position = options.position;
+
+        if (options.nextModalId !== undefined) {
+            delete _modal.data[options.nextModalId];
+            $("#" + options.nextModalId).remove();
+            _modal.data[options.id].nextModalId = undefined;
+        }
+    };
+
+    _modal.PrevId = function () {
+        var modal = _modal.data[_modal.current];
+        if (_modal.prevModalId !== undefined) {
+            return _modal.prevModalId;
+        }
+        return null;
+    };
+
+    _modal.Prev = function (cb) {
+        var previd = _modal.PrevId();
+        console.log(previd);
+        if (previd != null) {
+            // _modal.nextHistory = _modal.current;
+            _modal.switch(previd, cb);
+        }
+    };
+
+    _modal.buttonRender = function (buttons) {
+        var str = "";
+        for (var i in buttons) {
+            if (!buttons[i].title) {
+                continue;
+            }
+
+            if (!buttons[i].style) {
+                buttons[i].style = "btn-default";
+            }
+
+            if (buttons[i].href) {
+                str +=
+                    "<a class='btn btn-small " +
+                    buttons[i].style +
+                    "' href='" +
+                    buttons[i].href +
+                    "'>" +
+                    buttons[i].title +
+                    "</a>";
+            } else if (buttons[i].onclick) {
+                str +=
+                    "<button class='btn btn-small " +
+                    buttons[i].style +
+                    "' onclick='" +
+                    buttons[i].onclick +
+                    "'>" +
+                    buttons[i].title +
+                    "</button>";
+            }
+        }
+
+        return str;
+    };
+
+    _modal.Resize = function () {
+        var h = $("#valueui-modal").height(),
+            hh = $(".valueui-modal-header").height(),
+            fh = $(".valueui-modal-footer").height() + 20;
+        var bh = h - hh - fh - 20;
+        if (_modal.CurOptions.buttons && _modal.CurOptions.buttons.length > 0) {
+            bh += 10;
+        }
+        if (bh == _modal.CurOptions.inlet_height) {
+            return;
+        }
+        _modal.CurOptions.inlet_height = bh;
+        $(".valueui-modal-body").height(bh);
+        $(".valueui-modal-body-pagelet").height(bh);
+    };
+
+    _modal.FootAlert = function (type, msg, time_close, tplid) {
+        var timems = 200;
+        if (time_close) {
+            if (time_close < 1000) {
+                time_close = 1000;
+            }
+        }
+        tplid = tplid ? tplid : "valueui-modal-footer";
+        var elem = $("#" + tplid + "-alert");
+        if (!elem) {
+            return;
+        }
+        if (!type || type == "") {
+            elem.hide(timems);
+        } else {
+            $("#" + tplid).slideUp(timems);
+            var type_css = _alertTypeClassName(type);
+
+            if (!elem.hasClass("alert")) {
+                type_css = "alert alert-" + type_css;
+            }
+
+            elem.removeClass(function (i, className) {
+                return (className.match(/(^|\s)alert-\S+/g) || []).join(" ");
+            })
+                .addClass(type_css)
+                .html(msg)
+                .slideDown(timems);
+            if (!time_close) {
+                return;
+            }
+            setTimeout(function () {
+                $("#" + tplid + "-alert").hide(timems);
+                $("#" + tplid).show(timems);
+            }, time_close);
+        }
+    };
+
+    _modal.Close = function (cb) {
+        if (!_modal.current) {
+            if (cb) {
+                cb();
+            }
+            return;
+        }
+
+        $("#valueui-modal").hide(10, function () {
+            _modal.data = {};
+            _modal.current = null;
+            _modal.CurOptions = null;
+            $("#valueui-modal").remove();
+            $("#valueui-modal-bg").hide(200, cb);
+        });
+    };
+
+    _modal.ScrollTop = function () {
+        $(".valueui-modal-body-pagelet.valueui-scroll").scrollTop(0);
     };
 
     //
@@ -1257,7 +1852,7 @@
         } else if (options.append) {
             $("#" + options.dstid).append(txt);
         } else if (options.afterAppend) {
-            $("#" + options.dstid).append(txt);
+            $("#" + options.dstid).after(txt);
         } else {
             $("#" + options.dstid).html(txt);
         }
