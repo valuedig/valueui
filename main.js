@@ -90,11 +90,11 @@
             $(document).keyup(function (e) {
                 if (e.key === "Escape") {
                     if (_modal.current) {
-                        var pid = _modal.PrevId();
+                        var pid = _modal.prevId();
                         if (pid) {
-                            _modal.Prev();
+                            _modal.prev();
                         } else {
-                            _modal.Close();
+                            _modal.close();
                         }
                     }
                 }
@@ -106,7 +106,7 @@
         });
     };
 
-    valueui.Use = function () {
+    valueui.use = function () {
         var args = arguments,
             mods = [],
             cb = null;
@@ -125,12 +125,22 @@
             }
         }
 
+        if (valueui.app_version) {
+            for (var i in mods) {
+                if (/\?/.test(mods[i])) {
+                    mods[i] += "&_=" + valueui.app_version;
+                } else {
+                    mods[i] += "?_=" + valueui.app_version;
+                }
+            }
+        }
+
         boot(function () {
             seajs.use(mods, cb);
         });
     };
 
-    valueui.NewEventProxy = function () {
+    valueui.newEventProxy = function () {
         var args = arguments,
             ep = EventProxy.create();
         if (args.length > 0) {
@@ -141,7 +151,7 @@
 
     var job = valueui.job;
 
-    job.Register = function (opts) {
+    job.register = function (opts) {
         if (!opts || !opts.id || typeof opts.func !== "function" || !opts.delay) {
             return;
         }
@@ -155,7 +165,7 @@
         if (valueui.job.items[opts.id]) {
             opts.updated = valueui.job.items[opts.id].updated;
         } else {
-            opts.updated = valueui.utilx.UnixTimeMillisecond();
+            opts.updated = valueui.utilx.unixTimeMillisecond();
         }
 
         valueui.job.items[opts.id] = opts;
@@ -166,7 +176,7 @@
         }
     };
 
-    job.Clean = function (id) {
+    job.clean = function (id) {
         if (id && valueui.job.items[id]) {
             delete valueui.job.items[id];
             console.log("job clean " + id);
@@ -174,7 +184,7 @@
     };
 
     job.run = function () {
-        var tn = valueui.utilx.UnixTimeMillisecond();
+        var tn = valueui.utilx.unixTimeMillisecond();
         var rn = 0;
         for (var id in valueui.job.items) {
             var task = valueui.job.items[id];
@@ -197,7 +207,7 @@
                             console.log("job clean " + id);
                         } else {
                             valueui.job.items[id].running = false;
-                            valueui.job.items[id].updated = valueui.utilx.UnixTimeMillisecond();
+                            valueui.job.items[id].updated = valueui.utilx.unixTimeMillisecond();
                         }
                     },
                 });
@@ -216,7 +226,7 @@
     var utilx = valueui.utilx;
 
     //
-    utilx.ObjectClone = function (obj) {
+    utilx.objectClone = function (obj) {
         var copy;
 
         if (null == obj || typeof obj != "object") {
@@ -232,7 +242,7 @@
             copy = {};
             for (var attr in obj) {
                 if (obj.hasOwnProperty(attr)) {
-                    copy[attr] = utilx.ObjectClone(obj[attr]);
+                    copy[attr] = utilx.objectClone(obj[attr]);
                 }
             }
         }
@@ -285,7 +295,7 @@
 
     // http://tools.ietf.org/html/rfc2822#page-14
     // ISO 8601
-    utilx.MetaTimeParseFormat = function (time, format) {
+    utilx.metaTimeParseFormat = function (time, format) {
         time = "" + time;
         if (time.length < 17) {
             return new Date().utilxTimeFormat(format);
@@ -306,7 +316,7 @@
         return new Date(ut).utilxTimeFormat(format);
     };
 
-    utilx.TimeParseFormat = function (time, format) {
+    utilx.timeParseFormat = function (time, format) {
         if (!time) {
             return new Date().utilxTimeFormat(format);
         }
@@ -319,7 +329,7 @@
         return new Date(tn).utilxTimeFormat(format);
     };
 
-    utilx.UnixTimeFormat = function (time, format) {
+    utilx.unixTimeFormat = function (time, format) {
         if (!time) {
             return "";
         }
@@ -327,7 +337,7 @@
         return new Date(time * 1000).utilxTimeFormat(format);
     };
 
-    utilx.UnixMillisecondFormat = function (time, format) {
+    utilx.unixMillisecondFormat = function (time, format) {
         if (!time) {
             return "";
         }
@@ -335,16 +345,16 @@
         return new Date(time).utilxTimeFormat(format);
     };
 
-    utilx.UnixTimeSecond = function () {
+    utilx.unixTimeSecond = function () {
         return parseInt(Date.now() / 1000);
     };
 
-    utilx.UnixTimeMillisecond = function () {
+    utilx.unixTimeMillisecond = function () {
         return parseInt(Date.now());
     };
 
-    utilx.UnixTimeUptime = function (sec) {
-        sec = utilx.UnixTimeSecond() - sec;
+    utilx.unixTimeUptime = function (sec) {
+        sec = utilx.unixTimeSecond() - sec;
         var s = [];
 
         var d = parseInt(sec / 86400);
@@ -382,7 +392,33 @@
         return s.join(", ");
     };
 
-    utilx.ValuePercent = function (a, b) {
+    utilx.uriQuery = function () {
+        // This function is anonymous, is executed immediately and
+        // the return value is assigned to l4i.UriQuery!
+        var query_string = {};
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = pair[1];
+                // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [query_string[pair[0]], pair[1]];
+                query_string[pair[0]] = arr;
+                // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(pair[1]);
+            }
+        }
+
+        return query_string;
+    };
+
+    utilx.valuePercent = function (a, b) {
         if (b <= 0) {
             b = 1.0;
         } else {
@@ -392,7 +428,7 @@
         return parseInt((100 * a) / b);
     };
 
-    utilx.ArrayObjectHas = function (ar, v) {
+    utilx.arrayObjectHas = function (ar, v) {
         for (var i in ar) {
             if (ar[i] == v) {
                 return true;
@@ -401,7 +437,7 @@
         return false;
     };
 
-    utilx.VersionCompare = function (v1, v2) {
+    utilx.versionCompare = function (v1, v2) {
         if (typeof v1 !== "string") {
             return 0;
         }
@@ -424,7 +460,7 @@
         return v1.length == v2.length ? 0 : v1.length < v2.length ? -1 : 1;
     };
 
-    utilx.CryptoMd5 = function (str) {
+    utilx.cryptoMd5 = function (str) {
         // http://kevin.vanzonneveld.net
         // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
         // + namespaced by: Michael White (http://getsprink.com)
@@ -670,11 +706,11 @@
         return temp.toLowerCase();
     };
 
-    utilx.Sprintf = function () {
+    utilx.sprintf = function () {
         return _sprintf.apply(this, arguments);
     };
 
-    utilx.KindCheck = function (obj, apikind) {
+    utilx.kindCheck = function (obj, apikind) {
         if (!obj || !obj.kind || obj.kind == "") {
             return "network error";
         }
@@ -687,7 +723,7 @@
         return null;
     };
 
-    utilx.ByteSizeFormat = function (size, tofix) {
+    utilx.byteSizeFormat = function (size, tofix) {
         var ms = [
             [7, "ZiB"],
             [6, "EiB"],
@@ -717,7 +753,7 @@
         return size + " B";
     };
 
-    utilx.Ajax = function (url, options) {
+    utilx.ajax = function (url, options) {
         options = options || {};
 
         if (!url.startsWith("/")) {
@@ -774,7 +810,7 @@
     };
 
     //
-    var _alertTypeClassName = function(type) {
+    var _alertTypeClassName = function (type) {
         var type_ui = "info";
         switch (type) {
             case "ok":
@@ -793,11 +829,11 @@
                 type_ui = "info";
         }
         return type_ui;
-    }
-    
+    };
+
     var alert = valueui.alert;
 
-    alert.InnerRefresh = function (obj, type, msg) {
+    alert.innerRefresh = function (obj, type, msg) {
         if (type == "") {
             $(obj).hide();
         } else {
@@ -810,7 +846,7 @@
         }
     };
 
-    alert.Open = function (type, msg, options) {
+    alert.open = function (type, msg, options) {
         if (alert.modal_instance !== null) {
             // alert.modal_instance.dispose();
             alert.modal_instance = null;
@@ -822,7 +858,7 @@
         var close_ctn = "";
         if (true) {
             close_ctn =
-                '<button type="button" class="btn-close" data-bs-dismiss="modal" _onclick="valueui.alert.Close()"></button>';
+                '<button type="button" class="btn-close" data-bs-dismiss="modal" _onclick="valueui.alert.close()"></button>';
         }
 
         var btn_ctn = "";
@@ -862,7 +898,7 @@
         valueui.alert.modal_instance.show();
     };
 
-    alert.Close = function (cb) {
+    alert.close = function (cb) {
         if (alert.modal_instance) {
             alert.modal_instance.hide();
             alert.modal_instance.dispose();
@@ -881,11 +917,11 @@
         }
     };
 
-    alert.Error = function (msg) {
-        alert.Open("error", msg);
+    alert.error = function (msg) {
+        alert.open("error", msg);
     };
 
-    alert.InnerShow = function (obj, type, msg) {
+    alert.innerShow = function (obj, type, msg) {
         if (type == "") {
             $(obj).hide();
         } else {
@@ -898,8 +934,7 @@
         }
     };
 
-
-    _modal.Open = function (options) {
+    _modal.open = function (options) {
         options = options || {};
 
         if (typeof options.success !== "function") {
@@ -940,7 +975,7 @@
             _modal.data[_modal.current].nextModalId = options.id;
 
             options.buttons.unshift({
-                onclick: "valueui.modal.Prev()",
+                onclick: "valueui.modal.prev()",
                 title: valueui.lang.T("Back"),
                 style: "button is-dark btn-dark valueui-base-pull-left",
             });
@@ -972,7 +1007,7 @@
                 '<div id="valueui-modal">\
             <div class="valueui-modal-header" style="display:none">\
                 <span id="valueui-modal-header-title" class="title"></span>\
-                <span class="close" onclick="valueui.modal.Close()">×</span>\
+                <span class="close" onclick="valueui.modal.close()">×</span>\
             </div>\
             <div class="valueui-modal-body"><div id="valueui-modal-body-page" class="valueui-modal-body-page"></div></div>\
             <div id="valueui-modal-footer-alert" style="display:none"></div>\
@@ -1218,7 +1253,7 @@
                     // }).hide().slideDown(100, function() {
                 })
                 .show(0, function () {
-                    // _modal.Resize();
+                    // _modal.resize();
                     // options.success();
                 });
 
@@ -1239,7 +1274,7 @@
                 },
                 50,
                 function () {
-                    // _modal.Resize();
+                    // _modal.resize();
                     // options.success();
                 }
             );
@@ -1264,7 +1299,7 @@
 
                 $("#" + modalid + " .inputfocus").focus();
 
-                _modal.Resize();
+                _modal.resize();
 
                 if (options.success) {
                     options.success();
@@ -1293,17 +1328,16 @@
         }
     };
 
-    _modal.PrevId = function () {
-        var modal = _modal.data[_modal.current];
-        if (_modal.prevModalId !== undefined) {
-            return _modal.prevModalId;
+    _modal.prevId = function () {
+        var mp = _modal.data[_modal.current];
+        if (mp.prevModalId !== undefined) {
+            return mp.prevModalId;
         }
         return null;
     };
 
-    _modal.Prev = function (cb) {
-        var previd = _modal.PrevId();
-        console.log(previd);
+    _modal.prev = function (cb) {
+        var previd = _modal.prevId();
         if (previd != null) {
             // _modal.nextHistory = _modal.current;
             _modal.switch(previd, cb);
@@ -1345,7 +1379,7 @@
         return str;
     };
 
-    _modal.Resize = function () {
+    _modal.resize = function () {
         var h = $("#valueui-modal").height(),
             hh = $(".valueui-modal-header").height(),
             fh = $(".valueui-modal-footer").height() + 20;
@@ -1361,7 +1395,7 @@
         $(".valueui-modal-body-pagelet").height(bh);
     };
 
-    _modal.FootAlert = function (type, msg, time_close, tplid) {
+    _modal.footAlert = function (type, msg, time_close, tplid) {
         var timems = 200;
         if (time_close) {
             if (time_close < 1000) {
@@ -1399,7 +1433,7 @@
         }
     };
 
-    _modal.Close = function (cb) {
+    _modal.close = function (cb) {
         if (!_modal.current) {
             if (cb) {
                 cb();
@@ -1416,14 +1450,14 @@
         });
     };
 
-    _modal.ScrollTop = function () {
+    _modal.scrollTop = function () {
         $(".valueui-modal-body-pagelet.valueui-scroll").scrollTop(0);
     };
 
     //
     var cookie = valueui.cookie;
 
-    cookie.Set = function (key, val, sec, path) {
+    cookie.set = function (key, val, sec, path) {
         var expires = "";
 
         if (sec) {
@@ -1439,11 +1473,11 @@
         document.cookie = key + "=" + val + expires + "; path=" + path;
     };
 
-    cookie.SetByDay = function (key, val, day, path) {
-        cookie.Set(key, val, day * 86400, path);
+    cookie.setByDay = function (key, val, day, path) {
+        cookie.set(key, val, day * 86400, path);
     };
 
-    cookie.Get = function (key) {
+    cookie.get = function (key) {
         var keyEQ = key + "=";
         var ca = document.cookie.split(";");
 
@@ -1456,26 +1490,26 @@
         return null;
     };
 
-    cookie.Del = function (key, path) {
-        cookie.Set(key, "", -1, path);
+    cookie.del = function (key, path) {
+        cookie.set(key, "", -1, path);
     };
 
     //
     var session = valueui.session;
 
-    session.Set = function (key, val) {
+    session.set = function (key, val) {
         sessionStorage.setItem(key, val);
     };
 
-    session.Get = function (key) {
+    session.get = function (key) {
         return sessionStorage.getItem(key);
     };
 
-    session.Del = function (key) {
+    session.del = function (key) {
         sessionStorage.removeItem(key);
     };
 
-    session.DelByPrefix = function (prefix) {
+    session.delByPrefix = function (prefix) {
         var prelen = prefix.length;
         var qs = {};
 
@@ -1493,19 +1527,19 @@
     //
     var storage = valueui.storage;
 
-    storage.Set = function (key, val) {
+    storage.set = function (key, val) {
         localStorage.setItem(key, val);
     };
 
-    storage.Get = function (key) {
+    storage.get = function (key) {
         return localStorage.getItem(key);
     };
 
-    storage.Del = function (key) {
+    storage.del = function (key) {
         localStorage.removeItem(key);
     };
 
-    storage.DelByPrefix = function (prefix) {
+    storage.delByPrefix = function (prefix) {
         if (!prefix) {
             return;
         }
@@ -1526,28 +1560,28 @@
 
     var sessionData = valueui.sessionData;
 
-    sessionData.Set = function (key, val) {
-        session.Set(key, val);
-        storage.Set(key, val);
+    sessionData.set = function (key, val) {
+        session.set(key, val);
+        storage.set(key, val);
     };
 
-    sessionData.Get = function (key) {
-        var val = session.Get(key);
+    sessionData.get = function (key) {
+        var val = session.get(key);
         if (!val) {
-            val = storage.Get(key);
+            val = storage.get(key);
         }
         return val;
     };
 
-    sessionData.Del = function (key) {
-        session.Del(key);
-        storage.Del(key);
+    sessionData.del = function (key) {
+        session.del(key);
+        storage.del(key);
     };
 
     //
     var lang = valueui.lang;
 
-    lang.Sync = function (items, lang) {
+    lang.sync = function (items, lang) {
         if (!items || items.length < 1) {
             return;
         }
@@ -1578,10 +1612,10 @@
 
     var url = valueui.url;
 
-    url.EventRegister = function (name, func, pid) {
+    url.eventRegister = function (name, func, pid) {
         if (!url.clickEnable) {
             $(document).on("click", ".valueui-nav-item", function () {
-                valueui.url.EventHandler($(this));
+                valueui.url.eventHandler($(this));
                 // console.log($(this));
             });
             url.clickEnable = true;
@@ -1600,7 +1634,7 @@
         };
     };
 
-    url.EventClean = function (pid) {
+    url.eventClean = function (pid) {
         if (!pid) {
             return;
         }
@@ -1615,11 +1649,11 @@
         }
     };
 
-    url.EventActive = function (nav_target) {
+    url.eventActive = function (nav_target) {
         url._event_action(nav_target, null, false);
     };
 
-    url.EventHandler = function (nav_target, auto_prev) {
+    url.eventHandler = function (nav_target, auto_prev) {
         url._event_action(nav_target, auto_prev, true);
     };
 
@@ -1661,7 +1695,7 @@
         if (url.evs[nav_name]) {
             if (url.evs[nav_name].pid) {
                 if (auto_prev) {
-                    var nav_prev = valueui.storage.Get("valueui_" + url.evs[nav_name].pid);
+                    var nav_prev = valueui.storage.get("valueui_" + url.evs[nav_name].pid);
                     if (nav_prev) {
                         if (url.evs[nav_prev]) {
                             if (call_func) {
@@ -1684,7 +1718,7 @@
                     elem.find(".active:first").removeClass("active");
                     // elem.find("a[href='#"+ nav_name +"']").addClass("active");
                     nav_target.addClass("active");
-                    valueui.storage.Set("valueui_" + url.evs[nav_name].pid, nav_name);
+                    valueui.storage.set("valueui_" + url.evs[nav_name].pid, nav_name);
                 }
             } else {
                 // nav_name.closest("ul").find("a.active:first").removeClass("active");
@@ -1699,18 +1733,18 @@
         }
     };
 
-    url.EventChanged = function () {
+    url.eventChanged = function () {
         return false;
     };
 
     //
     var layout = valueui.layout;
-    layout.Template = function (name, cb) {
-        valueui.utilx.Ajax("valueui/tpl/layout-" + name + ".htm", {
+    layout.template = function (name, cb) {
+        valueui.utilx.ajax("valueui/tpl/layout-" + name + ".htm", {
             callback: cb,
         });
     };
-    layout.Render = function (name, data, cb) {
+    layout.render = function (name, data, cb) {
         //
         if (name != "std") {
             name = "std";
@@ -1727,11 +1761,11 @@
         }
 
         //
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "valueui-body",
             tplurl: "valueui/tpl/layout-" + name + ".htm",
             callback: function (err) {
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "valueui-layout-navbar",
                     tplid: "valueui-layout-navbar-tpl",
                     data: data,
@@ -1743,11 +1777,11 @@
         });
     };
 
-    layout.ModuleNavbarMenu = function (name, items, active) {
+    layout.moduleNavbarMenu = function (name, items, active) {
         if (!items || items.length < 1) {
             return;
         }
-        items = valueui.utilx.ObjectClone(items);
+        items = valueui.utilx.objectClone(items);
 
         var elem = document.getElementById("valueui-layout-module-navbar-items");
         if (!elem) {
@@ -1787,10 +1821,10 @@
         }
         $("#valueui-layout-module-navbar-items").html(ctn);
         $("#valueui-layout-module-navbar").removeClass("valueui-base-hide");
-        url.EventClean("valueui-layout-module-navbar-items");
+        url.eventClean("valueui-layout-module-navbar-items");
     };
 
-    // layout.ModuleNavbarMenuRefresh = function (div_target, cb) {
+    // layout.moduleNavbarMenuRefresh = function (div_target, cb) {
     //     if (!div_target) {
     //         return;
     //     }
@@ -1893,7 +1927,7 @@
         return str;
     };
 
-    template.Render = function (options) {
+    template.render = function (options) {
         options = options || {};
         if (typeof options.callback !== "function") {
             options.callback = function () {};
@@ -1904,7 +1938,7 @@
         }
 
         if (typeof options.data === "object" && options.data_hash_skip === true) {
-            var hash_id = valueui.utilx.CryptoMd5(JSON.stringify(options.data));
+            var hash_id = valueui.utilx.cryptoMd5(JSON.stringify(options.data));
             if (
                 valueui.template.datasets[options.dstid] &&
                 valueui.template.datasets[options.dstid] == hash_id
@@ -1936,7 +1970,7 @@
 
             return options.callback(null, null);
         } else if (typeof options.tplurl === "string") {
-            valueui.utilx.Ajax(options.tplurl, {
+            valueui.utilx.ajax(options.tplurl, {
                 callback: function (err, rsp) {
                     if (err) {
                         return options.callback(err);
