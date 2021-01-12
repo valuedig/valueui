@@ -1244,19 +1244,6 @@
         }
 
         if (firstload) {
-            $("#valueui-modal")
-                .css({
-                    position: "fixed",
-                    "z-index": 200,
-                    top: top + "px",
-                    left: left + "px",
-                    // }).hide().slideDown(100, function() {
-                })
-                .show(0, function () {
-                    // _modal.resize();
-                    // options.success();
-                });
-
             if (options.title) {
                 $(".valueui-modal-header .title").text(options.title);
             }
@@ -1264,6 +1251,18 @@
             if (buttons.length > 10) {
                 $(".valueui-modal-footer").html(buttons);
             }
+
+            $("#valueui-modal")
+                .css({
+                    position: "fixed",
+                    "z-index": 200,
+                    top: top + "px",
+                    left: left + "px",
+                })
+                .slideDown(100, function () {
+                    // _modal.resize();
+                    // options.success();
+                });
         } else {
             $("#valueui-modal").animate(
                 {
@@ -1357,22 +1356,12 @@
 
             if (buttons[i].href) {
                 str +=
-                    "<a class='btn btn-small " +
-                    buttons[i].style +
-                    "' href='" +
-                    buttons[i].href +
-                    "'>" +
-                    buttons[i].title +
-                    "</a>";
+                    `<a class="btn btn-small ${buttons[i].style}"` +
+                    ` href="${buttons[i].href}">${buttons[i].title}</a>`;
             } else if (buttons[i].onclick) {
                 str +=
-                    "<button class='btn btn-small " +
-                    buttons[i].style +
-                    "' onclick='" +
-                    buttons[i].onclick +
-                    "'>" +
-                    buttons[i].title +
-                    "</button>";
+                    `<button class="btn btn-small ${buttons[i].style}"` +
+                    ` onclick="${buttons[i].onclick}">${buttons[i].title}</button>`;
             }
         }
 
@@ -1427,8 +1416,8 @@
                 return;
             }
             setTimeout(function () {
-                $("#" + tplid + "-alert").hide(timems);
-                $("#" + tplid).show(timems);
+                $("#" + tplid + "-alert").slideDown(timems);
+                $("#" + tplid).slideUp(timems);
             }, time_close);
         }
     };
@@ -1440,14 +1429,16 @@
             }
             return;
         }
-
-        $("#valueui-modal").hide(10, function () {
+        $("#valueui-modal").slideUp(100, function () {
             _modal.data = {};
             _modal.current = null;
             _modal.CurOptions = null;
             $("#valueui-modal").remove();
-            $("#valueui-modal-bg").hide(200, cb);
+            if (cb) {
+                cb();
+            }
         });
+        $("#valueui-modal-bg").fadeOut(100);
     };
 
     _modal.scrollTop = function () {
