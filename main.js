@@ -710,6 +710,41 @@
         return _sprintf.apply(this, arguments);
     };
 
+    utilx.errorKindCheck = function (err, obj, apikind) {
+        var msg = "";
+        if (err) {
+            if (typeof obj === "string") {
+                msg = `Error Code : ${err}, Message : ${obj}`;
+            } else {
+                msg = err;
+            }
+            return msg;
+        }
+        const nerr = "Network Exception, Please try again later";
+        if (obj.error) {
+            if (obj.error.code) {
+                msg = `Error Code : ${obj.error.code}`;
+            }
+            if (obj.error.message) {
+                msg += `, Message : ${obj.error.message}`;
+            }
+            if (msg.length < 1) {
+                msg = nerr;
+            }
+            return msg;
+        }
+        if (!obj || !obj.kind || obj.kind == "") {
+            return nerr;
+        }
+        if (obj.kind != apikind) {
+            if (obj.message) {
+                return _sprintf("Error %s, Message %s", obj.kind, obj.message);
+            }
+            return _sprintf("Error %s, Unknown Error", obj.kind);
+        }
+        return null;
+    };
+
     utilx.kindCheck = function (obj, apikind) {
         if (!obj || !obj.kind || obj.kind == "") {
             return "network error";
