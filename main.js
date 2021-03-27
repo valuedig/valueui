@@ -910,10 +910,10 @@
 
         var ctn = _sprintf(
             '<div id="valueui-alert" class="modal fade %s">' +
-                '<div class="modal-dialog"><div class="modal-content">' +
-                '  <div class="modal-header"><h5 class="modal-title">%s</h5>%s</div>' +
-                '  <div class="modal-body" id="valueui-alert-msg">%s</div>%s' +
-                "</div></div></div>",
+            '<div class="modal-dialog"><div class="modal-content">' +
+            '  <div class="modal-header"><h5 class="modal-title">%s</h5>%s</div>' +
+            '  <div class="modal-body" id="valueui-alert-msg">%s</div>%s' +
+            "</div></div></div>",
             type_ui,
             options.title,
             close_ctn,
@@ -973,11 +973,11 @@
         options = options || {};
 
         if (typeof options.success !== "function") {
-            options.success = function () {};
+            options.success = function () { };
         }
 
         if (typeof options.error !== "function") {
-            options.error = function () {};
+            options.error = function () { };
         }
 
         if (!options.position) {
@@ -1435,11 +1435,7 @@
             elem.hide(timems);
         } else {
             $("#" + tplid).slideUp(timems);
-            var type_css = _alertTypeClassName(type);
-
-            if (!elem.hasClass("alert")) {
-                type_css = "alert alert-" + type_css;
-            }
+            var type_css = "alert-" + _alertTypeClassName(type);
 
             elem.removeClass(function (i, className) {
                 return (className.match(/(^|\s)alert-\S+/g) || []).join(" ");
@@ -1451,8 +1447,8 @@
                 return;
             }
             setTimeout(function () {
-                $("#" + tplid + "-alert").slideDown(timems);
-                $("#" + tplid).slideUp(timems);
+                $("#" + tplid).slideDown(timems);
+                elem.slideUp(timems);
             }, time_close);
         }
     };
@@ -1956,7 +1952,7 @@
     template.render = function (options) {
         options = options || {};
         if (typeof options.callback !== "function") {
-            options.callback = function () {};
+            options.callback = function () { };
         }
 
         if (!options.dstid) {
@@ -2277,43 +2273,43 @@ var _sprintf = function () {
     "use strict";
 
     var doT = {
-            version: "1.0.3",
-            templateSettings: {
-                evaluate: /\{\[([\s\S]+?(\}?)+)\]\}/g,
-                interpolate: /\{\[=([\s\S]+?)\]\}/g,
-                encode: /\{\[!([\s\S]+?)\]\}/g,
-                use: /\{\[#([\s\S]+?)\]\}/g,
-                useParams: /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
-                define: /\{\[##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\]\}/g,
-                defineParams: /^\s*([\w$]+):([\s\S]+)/,
-                conditional: /\{\[\?(\?)?\s*([\s\S]*?)\s*\]\}/g,
-                iterate: /\{\[~\s*(?:\]\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\]\})/g,
-                varname: "it",
-                strip: true,
-                append: true,
-                selfcontained: false,
-                doNotSkipEncoded: false,
-            },
-            template: undefined, //fn, compile template
-            compile: undefined, //fn, for express
+        version: "1.0.3",
+        templateSettings: {
+            evaluate: /\{\[([\s\S]+?(\}?)+)\]\}/g,
+            interpolate: /\{\[=([\s\S]+?)\]\}/g,
+            encode: /\{\[!([\s\S]+?)\]\}/g,
+            use: /\{\[#([\s\S]+?)\]\}/g,
+            useParams: /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
+            define: /\{\[##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\]\}/g,
+            defineParams: /^\s*([\w$]+):([\s\S]+)/,
+            conditional: /\{\[\?(\?)?\s*([\s\S]*?)\s*\]\}/g,
+            iterate: /\{\[~\s*(?:\]\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\]\})/g,
+            varname: "it",
+            strip: true,
+            append: true,
+            selfcontained: false,
+            doNotSkipEncoded: false,
         },
+        template: undefined, //fn, compile template
+        compile: undefined, //fn, for express
+    },
         _globals;
 
     doT.encodeHTMLSource = function (doNotSkipEncoded) {
         var encodeHTMLRules = {
-                "&": "&#38;",
-                "<": "&#60;",
-                ">": "&#62;",
-                '"': "&#34;",
-                "'": "&#39;",
-                "/": "&#47;",
-            },
+            "&": "&#38;",
+            "<": "&#60;",
+            ">": "&#62;",
+            '"': "&#34;",
+            "'": "&#39;",
+            "/": "&#47;",
+        },
             matchHTML = doNotSkipEncoded ? /[&<>"'\/]/g : /&(?!#?\w+;)|<|>|"|'|\//g;
         return function (code) {
             return code
                 ? code.toString().replace(matchHTML, function (m) {
-                      return encodeHTMLRules[m] || m;
-                  })
+                    return encodeHTMLRules[m] || m;
+                })
                 : "";
         };
     };
@@ -2333,17 +2329,17 @@ var _sprintf = function () {
     }
 
     var startend = {
-            append: {
-                start: "'+(",
-                end: ")+'",
-                startencode: "'+encodeHTML(",
-            },
-            split: {
-                start: "';out+=(",
-                end: ");out+='",
-                startencode: "';out+=encodeHTML(",
-            },
+        append: {
+            start: "'+(",
+            end: ")+'",
+            startencode: "'+encodeHTML(",
         },
+        split: {
+            start: "';out+=(",
+            end: ");out+='",
+            startencode: "';out+=encodeHTML(",
+        },
+    },
         skip = /$^/;
 
     function resolveDefs(c, block, def) {
@@ -2402,8 +2398,8 @@ var _sprintf = function () {
             "var out='" +
             (c.strip
                 ? str
-                      .replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g, " ")
-                      .replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g, "")
+                    .replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g, " ")
+                    .replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g, "")
                 : str
             )
                 .replace(/'|\\/g, "\\$&")
@@ -2420,8 +2416,8 @@ var _sprintf = function () {
                             ? "';}else if(" + unescape(code) + "){out+='"
                             : "';}else{out+='"
                         : code
-                        ? "';if(" + unescape(code) + "){out+='"
-                        : "';}out+='";
+                            ? "';if(" + unescape(code) + "){out+='"
+                            : "';}out+='";
                 })
                 .replace(c.iterate || skip, function (m, iterate, vname, iname) {
                     if (!iterate) return "';} } out+='";
@@ -2752,7 +2748,7 @@ var _sprintf = function () {
         return node.hasAttribute // non-IE6/7
             ? node.src
             : // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-              node.getAttribute("src", 4);
+            node.getAttribute("src", 4);
     }
 
     // For Developers
@@ -3254,7 +3250,7 @@ var _sprintf = function () {
         meta.uri
             ? Module.save(meta.uri, meta)
             : // Save information for "saving" work in the script onload event
-              (anonymousMeta = meta);
+            (anonymousMeta = meta);
     };
 
     // Save meta data to cachedMods
@@ -3457,7 +3453,7 @@ var _sprintf = function () {
         return;
     }
 
-    var debug = function () {};
+    var debug = function () { };
 
     /*!
      * refs
