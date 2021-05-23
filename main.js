@@ -1909,6 +1909,8 @@
             $("#" + options.dstid).append(txt);
         } else if (options.afterAppend) {
             $("#" + options.dstid).after(txt);
+        } else if (options.beforeAppend) {
+            $("#" + options.dstid).before(txt);
         } else {
             $("#" + options.dstid).html(txt);
         }
