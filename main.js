@@ -721,7 +721,7 @@
             return msg;
         }
         const nerr = "Network Exception, Please try again later";
-        if (obj.error) {
+        if (obj && obj.error) {
             if (obj.error.code) {
                 msg = `Error Code : ${obj.error.code}`;
             }
