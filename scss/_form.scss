@@ -1,0 +1,73 @@
+.valueui-formtable,
+.valueui-formtable table {
+  width: 100%;
+}
+
+.valueui-formtable table.valign-middle td,
+.valueui-formtable table.valign-middle th {
+  vertical-align: middle !important;
+}
+
+.valueui-formtable-row-line,
+.valueui-formtable-tr-line {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.valueui-formtable-tr-line:last-child {
+  border-bottom: 0 !important;
+}
+
+.valueui-formtable>tbody>tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.valueui-formtable>tbody>tr:last-child {
+  border-bottom: 0;
+}
+
+.valueui-formtable>tbody>tr>td {
+  padding: 10px 20px 10px 0;
+  vertical-align: top;
+}
+
+.valueui-formtable>tbody>tr>td:last-child {
+  padding-right: 0;
+}
+
+.valueui-formtable.valueui-formtable-title-right>tbody>tr>td:first-child {
+  text-align: right;
+}
+
+.valueui-formtable>tbody>tr>td:first-child {
+  font-weight: bold;
+}
+
+.valueui-formtable tbody>tr.hover:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.valueui-formtable table td,
+.valueui-formtable table th {
+  padding: 2px 30px 2px 0;
+}
+
+.valueui-formtable table td:last-child,
+.valueui-formtable table th:last-child {
+  padding-right: 0 !important;
+}
+
+.valueui-formtable-space-x0050 td,
+.valueui-formtable-space-x0050 th {
+  padding: 0.50rem 1.00rem 0.50rem 0 !important;
+}
+
+.valueui-formtable-space-x0100 td,
+.valueui-formtable-space-x0100 th {
+  padding: 1.00rem 2.00rem 1.00rem 0 !important;
+}
+
+.valueui-formtable .input-group {
+  margin-bottom: 0 !important;
+}
+
