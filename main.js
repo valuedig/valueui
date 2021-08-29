@@ -1846,59 +1846,55 @@
         url.eventClean("valueui-layout-module-navbar-items");
     };
 
-    // layout.moduleNavbarMenuRefresh = function (div_target, cb) {
-    //     if (!div_target) {
-    //         return;
-    //     }
+    layout.moduleNavbarMenuRefresh = function (div_target, cb) {
+        if (!div_target) {
+            return;
+        }
 
-    //     var elem = document.getElementById(div_target);
-    //     if (!elem) {
-    //         return;
-    //     }
-    //     $("#valueui-layout-module-navbar-items").html(elem.innerHTML);
+        var elem = document.getElementById(div_target);
+        if (!elem) {
+            return;
+        }
+        $("#valueui-layout-module-navbar-items").html(elem.innerHTML);
 
-    //     if (cb && typeof cb === "function") {
-    //         cb(null);
-    //     }
-    // };
+        if (cb && typeof cb === "function") {
+            cb(null);
+        }
+    };
 
-    // layout.ModuleOpToolsRefresh = function (div_target, cb) {
-    //     if (!div_target) {
-    //         return;
-    //     }
+    layout.moduleNavbarOpToolRefresh = function (div_target, cb) {
+        if (!div_target) {
+            return;
+        }
 
-    //     if (!cb || typeof cb !== "function") {
-    //         cb = function () {};
-    //     }
+        if (!cb || typeof cb !== "function") {
+            cb = function () {};
+        }
 
-    //     if (typeof div_target == "string" && div_target == inCp.OpToolActive) {
-    //         return cb();
-    //     }
+        if (typeof div_target == "string" && div_target == layout.module_navbar_optool_active) {
+            return cb();
+        }
 
-    //     // if (!div_target) {
-    //     //     div_target = "#incp-optools";
-    //     // }
+        // $("#valueui-layout-module-navbar-optools").empty();
+        if (typeof div_target == "string") {
+            var opt = $("#valueui-body").find(div_target);
+            if (opt) {
+                // $("#valueui-layout-module-navbar-optools").html(opt.html());
+                valueui.template.render({
+                    dstid: "valueui-layout-module-navbar-optools",
+                    tplsrc: opt.html(),
+                    data: {},
+                    callback: cb,
+                });
+                layout.module_navbar_optool_active = div_target;
+            }
+        }
+    };
 
-    //     // $("#valueui-layout-module-navbar-optools").empty();
-    //     if (typeof div_target == "string") {
-    //         var opt = $("#comp-content").find(div_target);
-    //         if (opt) {
-    //             // $("#valueui-layout-module-navbar-optools").html(opt.html());
-    //             l4iTemplate.Render({
-    //                 dstid: "valueui-layout-module-navbar-optools",
-    //                 tplsrc: opt.html(),
-    //                 data: {},
-    //                 callback: cb,
-    //             });
-    //             inCp.OpToolActive = div_target;
-    //         }
-    //     }
-    // };
-
-    // layout.ModuleOpToolsClean = function () {
-    //     $("#valueui-layout-module-navbar-optools").html("");
-    //     inCp.OpToolActive = null;
-    // };
+    layout.moduleNavbarOpToolClean = function () {
+        $("#valueui-layout-module-navbar-optools").html("");
+        layout.module_navbar_optool_active = null;
+    };
 
     var template = valueui.template;
 
