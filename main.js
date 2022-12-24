@@ -354,6 +354,9 @@
     };
 
     utilx.unixTimeUptime = function (sec) {
+        if (!set || sec < 1) {
+            return "0";
+        }
         sec = utilx.unixTimeSecond() - sec;
         var s = [];
 
