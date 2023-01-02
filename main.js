@@ -1438,7 +1438,7 @@
             elem.hide(timems);
         } else {
             $("#" + tplid).slideUp(timems);
-            var type_css = "alert-" + _alertTypeClassName(type);
+            var type_css = "alert alert-" + _alertTypeClassName(type);
 
             elem.removeClass(function (i, className) {
                 return (className.match(/(^|\s)alert-\S+/g) || []).join(" ");
