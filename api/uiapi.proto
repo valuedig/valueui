@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package valuedig.uiapi;
+
+option optimize_for = LITE_RUNTIME;
+option go_package = "./;uiapi";
+
+// import "google/protobuf/any.proto";
+
+message LayoutEntry {
+  string name = 1;
+}
+
