@@ -25,7 +25,9 @@
     var valueui = (global.valueui = {
         version: "0.0.2",
         basepath: "/",
+        uipath: "~/valueui",
         inited: false,
+        viewx: {},
         cookie: {},
         session: {},
         storage: {},
@@ -66,7 +68,7 @@
 
     var _modal = valueui.modal;
 
-    var boot = function (cb) {
+    var init = function (cb) {
         if (valueui.inited) {
             if (typeof cb === "function") {
                 cb();
@@ -80,10 +82,10 @@
         valueui.inited = true;
 
         var mods = [
-            "valueui/zeptojs/zepto.js",
-            "valueui/bs/js/bootstrap.js",
-            "valueui/bs/css/bootstrap.css",
-            "valueui/main.css",
+            valueui.uipath + "/zeptojs/zepto.js",
+            valueui.uipath + "/bs/js/bootstrap.js",
+            valueui.uipath + "/bs/css/bootstrap.css",
+            valueui.uipath + "/main.css",
         ];
 
         seajs.use(mods, function () {
@@ -135,8 +137,14 @@
             }
         }
 
-        boot(function () {
+        init(function () {
             seajs.use(mods, cb);
+        });
+    };
+
+    valueui.main = function () {
+        valueui.use(function () {
+            valueui.viewx.layout("body-content", "layout/index");
         });
     };
 
@@ -147,6 +155,41 @@
             ep.assign.apply(ep, args);
         }
         return ep;
+    };
+
+    var viewx = valueui.viewx;
+
+    viewx.layout = function (id, name) {
+        var url = valueui.basepath + "/api/v2/layout/fetch?name=" + name + ".toml";
+
+        var ep = valueui.newEventProxy("data", "tpl", function (data, tpl) {
+            var msg = valueui.utilx.kindCheck(data, "LayoutContainer");
+            if (msg) {
+                return valueui.alert.open("error", msg);
+            }
+            msg = valueui.utilx.kindCheck(tpl, "Template");
+            if (msg) {
+                return valueui.alert.open("error", msg);
+            }
+
+            valueui.template.render({
+                tplsrc: tpl.html,
+                dstid: id,
+                data: data,
+            });
+        });
+
+        ep.fail(function (err) {
+            valueui.alert.open("error", "network error " + err);
+        });
+
+        valueui.utilx.ajax(url, {
+            callback: ep.done("data"),
+        });
+
+        valueui.utilx.ajax(valueui.basepath + "/api/v2/layout/fetch?name=template/layout.html", {
+            callback: ep.done("tpl"),
+        });
     };
 
     var job = valueui.job;
@@ -913,10 +956,10 @@
 
         var ctn = _sprintf(
             '<div id="valueui-alert" class="modal fade %s">' +
-            '<div class="modal-dialog"><div class="modal-content">' +
-            '  <div class="modal-header"><h5 class="modal-title">%s</h5>%s</div>' +
-            '  <div class="modal-body" id="valueui-alert-msg">%s</div>%s' +
-            "</div></div></div>",
+                '<div class="modal-dialog"><div class="modal-content">' +
+                '  <div class="modal-header"><h5 class="modal-title">%s</h5>%s</div>' +
+                '  <div class="modal-body" id="valueui-alert-msg">%s</div>%s' +
+                "</div></div></div>",
             type_ui,
             options.title,
             close_ctn,
@@ -976,11 +1019,11 @@
         options = options || {};
 
         if (typeof options.success !== "function") {
-            options.success = function () { };
+            options.success = function () {};
         }
 
         if (typeof options.error !== "function") {
-            options.error = function () { };
+            options.error = function () {};
         }
 
         if (!options.position) {
@@ -1953,7 +1996,7 @@
     template.render = function (options) {
         options = options || {};
         if (typeof options.callback !== "function") {
-            options.callback = function () { };
+            options.callback = function () {};
         }
 
         if (!options.dstid) {
@@ -2040,7 +2083,8 @@ var _sprintf = function () {
     //   example 5: sprintf('%-03s', 'E');
     //   returns 5: 'E00'
 
-    var regex = /%%|%(\d+\$)?([-+\'#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuideEfFgG])/g;
+    var regex =
+        /%%|%(\d+\$)?([-+\'#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuideEfFgG])/g;
     var a = arguments;
     var i = 0;
     var format = a[i++];
@@ -2274,43 +2318,44 @@ var _sprintf = function () {
     "use strict";
 
     var doT = {
-        version: "1.0.3",
-        templateSettings: {
-            evaluate: /\{\[([\s\S]+?(\}?)+)\]\}/g,
-            interpolate: /\{\[=([\s\S]+?)\]\}/g,
-            encode: /\{\[!([\s\S]+?)\]\}/g,
-            use: /\{\[#([\s\S]+?)\]\}/g,
-            useParams: /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
-            define: /\{\[##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\]\}/g,
-            defineParams: /^\s*([\w$]+):([\s\S]+)/,
-            conditional: /\{\[\?(\?)?\s*([\s\S]*?)\s*\]\}/g,
-            iterate: /\{\[~\s*(?:\]\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\]\})/g,
-            varname: "it",
-            strip: true,
-            append: true,
-            selfcontained: false,
-            doNotSkipEncoded: false,
+            version: "1.0.3",
+            templateSettings: {
+                evaluate: /\{\[([\s\S]+?(\}?)+)\]\}/g,
+                interpolate: /\{\[=([\s\S]+?)\]\}/g,
+                encode: /\{\[!([\s\S]+?)\]\}/g,
+                use: /\{\[#([\s\S]+?)\]\}/g,
+                useParams:
+                    /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
+                define: /\{\[##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\]\}/g,
+                defineParams: /^\s*([\w$]+):([\s\S]+)/,
+                conditional: /\{\[\?(\?)?\s*([\s\S]*?)\s*\]\}/g,
+                iterate: /\{\[~\s*(?:\]\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\]\})/g,
+                varname: "it",
+                strip: true,
+                append: true,
+                selfcontained: false,
+                doNotSkipEncoded: false,
+            },
+            template: undefined, //fn, compile template
+            compile: undefined, //fn, for express
         },
-        template: undefined, //fn, compile template
-        compile: undefined, //fn, for express
-    },
         _globals;
 
     doT.encodeHTMLSource = function (doNotSkipEncoded) {
         var encodeHTMLRules = {
-            "&": "&#38;",
-            "<": "&#60;",
-            ">": "&#62;",
-            '"': "&#34;",
-            "'": "&#39;",
-            "/": "&#47;",
-        },
+                "&": "&#38;",
+                "<": "&#60;",
+                ">": "&#62;",
+                '"': "&#34;",
+                "'": "&#39;",
+                "/": "&#47;",
+            },
             matchHTML = doNotSkipEncoded ? /[&<>"'\/]/g : /&(?!#?\w+;)|<|>|"|'|\//g;
         return function (code) {
             return code
                 ? code.toString().replace(matchHTML, function (m) {
-                    return encodeHTMLRules[m] || m;
-                })
+                      return encodeHTMLRules[m] || m;
+                  })
                 : "";
         };
     };
@@ -2330,17 +2375,17 @@ var _sprintf = function () {
     }
 
     var startend = {
-        append: {
-            start: "'+(",
-            end: ")+'",
-            startencode: "'+encodeHTML(",
+            append: {
+                start: "'+(",
+                end: ")+'",
+                startencode: "'+encodeHTML(",
+            },
+            split: {
+                start: "';out+=(",
+                end: ");out+='",
+                startencode: "';out+=encodeHTML(",
+            },
         },
-        split: {
-            start: "';out+=(",
-            end: ");out+='",
-            startencode: "';out+=encodeHTML(",
-        },
-    },
         skip = /$^/;
 
     function resolveDefs(c, block, def) {
@@ -2399,8 +2444,8 @@ var _sprintf = function () {
             "var out='" +
             (c.strip
                 ? str
-                    .replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g, " ")
-                    .replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g, "")
+                      .replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g, " ")
+                      .replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g, "")
                 : str
             )
                 .replace(/'|\\/g, "\\$&")
@@ -2417,8 +2462,8 @@ var _sprintf = function () {
                             ? "';}else if(" + unescape(code) + "){out+='"
                             : "';}else{out+='"
                         : code
-                            ? "';if(" + unescape(code) + "){out+='"
-                            : "';}out+='";
+                        ? "';if(" + unescape(code) + "){out+='"
+                        : "';}out+='";
                 })
                 .replace(c.iterate || skip, function (m, iterate, vname, iname) {
                     if (!iterate) return "';} } out+='";
@@ -2749,7 +2794,7 @@ var _sprintf = function () {
         return node.hasAttribute // non-IE6/7
             ? node.src
             : // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-            node.getAttribute("src", 4);
+              node.getAttribute("src", 4);
     }
 
     // For Developers
@@ -2919,7 +2964,8 @@ var _sprintf = function () {
      * ref: tests/research/parse-dependencies/test.html
      */
 
-    var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^\/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g;
+    var REQUIRE_RE =
+        /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^\/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g;
     var SLASH_RE = /\\\\/g;
 
     function parseDependencies(code) {
@@ -3251,7 +3297,7 @@ var _sprintf = function () {
         meta.uri
             ? Module.save(meta.uri, meta)
             : // Save information for "saving" work in the script onload event
-            (anonymousMeta = meta);
+              (anonymousMeta = meta);
     };
 
     // Save meta data to cachedMods
@@ -3454,7 +3500,7 @@ var _sprintf = function () {
         return;
     }
 
-    var debug = function () { };
+    var debug = function () {};
 
     /*!
      * refs

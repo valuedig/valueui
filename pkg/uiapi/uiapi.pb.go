@@ -20,16 +20,19 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type LayoutEntry struct {
+type LayoutPos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" toml:"name,omitempty"`
+	Left   uint32 `protobuf:"varint,2,opt,name=left,proto3" json:"left,omitempty" toml:"left,omitempty"`
+	Top    uint32 `protobuf:"varint,3,opt,name=top,proto3" json:"top,omitempty" toml:"top,omitempty"`
+	Right  uint32 `protobuf:"varint,4,opt,name=right,proto3" json:"right,omitempty" toml:"right,omitempty"`
+	Bottom uint32 `protobuf:"varint,5,opt,name=bottom,proto3" json:"bottom,omitempty" toml:"bottom,omitempty"`
 }
 
-func (x *LayoutEntry) Reset() {
-	*x = LayoutEntry{}
+func (x *LayoutPos) Reset() {
+	*x = LayoutPos{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_uiapi_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +40,13 @@ func (x *LayoutEntry) Reset() {
 	}
 }
 
-func (x *LayoutEntry) String() string {
+func (x *LayoutPos) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LayoutEntry) ProtoMessage() {}
+func (*LayoutPos) ProtoMessage() {}
 
-func (x *LayoutEntry) ProtoReflect() protoreflect.Message {
+func (x *LayoutPos) ProtoReflect() protoreflect.Message {
 	mi := &file_uiapi_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,14 +58,201 @@ func (x *LayoutEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LayoutEntry.ProtoReflect.Descriptor instead.
-func (*LayoutEntry) Descriptor() ([]byte, []int) {
+// Deprecated: Use LayoutPos.ProtoReflect.Descriptor instead.
+func (*LayoutPos) Descriptor() ([]byte, []int) {
 	return file_uiapi_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LayoutEntry) GetName() string {
+func (x *LayoutPos) GetLeft() uint32 {
+	if x != nil {
+		return x.Left
+	}
+	return 0
+}
+
+func (x *LayoutPos) GetTop() uint32 {
+	if x != nil {
+		return x.Top
+	}
+	return 0
+}
+
+func (x *LayoutPos) GetRight() uint32 {
+	if x != nil {
+		return x.Right
+	}
+	return 0
+}
+
+func (x *LayoutPos) GetBottom() uint32 {
+	if x != nil {
+		return x.Bottom
+	}
+	return 0
+}
+
+type LayoutContainer struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Kind    string             `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty" toml:"kind,omitempty"`
+	Name    string             `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" toml:"name,omitempty"`
+	Align   string             `protobuf:"bytes,3,opt,name=align,proto3" json:"align,omitempty" toml:"align,omitempty"`
+	Width   string             `protobuf:"bytes,4,opt,name=width,proto3" json:"width,omitempty" toml:"width,omitempty"`
+	Height  string             `protobuf:"bytes,5,opt,name=height,proto3" json:"height,omitempty" toml:"height,omitempty"`
+	Options map[string]string  `protobuf:"bytes,13,rep,name=options,proto3" json:"options,omitempty" toml:"options,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Rows    []*LayoutContainer `protobuf:"bytes,14,rep,name=rows,proto3" json:"rows,omitempty" toml:"rows,omitempty"`
+	Cols    []*LayoutContainer `protobuf:"bytes,15,rep,name=cols,proto3" json:"cols,omitempty" toml:"cols,omitempty"`
+}
+
+func (x *LayoutContainer) Reset() {
+	*x = LayoutContainer{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_uiapi_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LayoutContainer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LayoutContainer) ProtoMessage() {}
+
+func (x *LayoutContainer) ProtoReflect() protoreflect.Message {
+	mi := &file_uiapi_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LayoutContainer.ProtoReflect.Descriptor instead.
+func (*LayoutContainer) Descriptor() ([]byte, []int) {
+	return file_uiapi_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LayoutContainer) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *LayoutContainer) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *LayoutContainer) GetAlign() string {
+	if x != nil {
+		return x.Align
+	}
+	return ""
+}
+
+func (x *LayoutContainer) GetWidth() string {
+	if x != nil {
+		return x.Width
+	}
+	return ""
+}
+
+func (x *LayoutContainer) GetHeight() string {
+	if x != nil {
+		return x.Height
+	}
+	return ""
+}
+
+func (x *LayoutContainer) GetOptions() map[string]string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+func (x *LayoutContainer) GetRows() []*LayoutContainer {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
+func (x *LayoutContainer) GetCols() []*LayoutContainer {
+	if x != nil {
+		return x.Cols
+	}
+	return nil
+}
+
+type Template struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Kind string `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty" toml:"kind,omitempty"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" toml:"name,omitempty"`
+	Html string `protobuf:"bytes,3,opt,name=html,proto3" json:"html,omitempty" toml:"html,omitempty"`
+}
+
+func (x *Template) Reset() {
+	*x = Template{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_uiapi_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Template) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Template) ProtoMessage() {}
+
+func (x *Template) ProtoReflect() protoreflect.Message {
+	mi := &file_uiapi_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Template.ProtoReflect.Descriptor instead.
+func (*Template) Descriptor() ([]byte, []int) {
+	return file_uiapi_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Template) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *Template) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Template) GetHtml() string {
+	if x != nil {
+		return x.Html
 	}
 	return ""
 }
@@ -71,11 +261,42 @@ var File_uiapi_proto protoreflect.FileDescriptor
 
 var file_uiapi_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x75, 0x69, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0e, 0x76,
-	0x61, 0x6c, 0x75, 0x65, 0x64, 0x69, 0x67, 0x2e, 0x75, 0x69, 0x61, 0x70, 0x69, 0x22, 0x21, 0x0a,
-	0x0b, 0x4c, 0x61, 0x79, 0x6f, 0x75, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x12, 0x0a, 0x04,
-	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
-	0x42, 0x0c, 0x48, 0x03, 0x5a, 0x08, 0x2e, 0x2f, 0x3b, 0x75, 0x69, 0x61, 0x70, 0x69, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6c, 0x75, 0x65, 0x64, 0x69, 0x67, 0x2e, 0x75, 0x69, 0x61, 0x70, 0x69, 0x22, 0x5f, 0x0a,
+	0x09, 0x4c, 0x61, 0x79, 0x6f, 0x75, 0x74, 0x50, 0x6f, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x6c, 0x65,
+	0x66, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x6c, 0x65, 0x66, 0x74, 0x12, 0x10,
+	0x0a, 0x03, 0x74, 0x6f, 0x70, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x03, 0x74, 0x6f, 0x70,
+	0x12, 0x14, 0x0a, 0x05, 0x72, 0x69, 0x67, 0x68, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52,
+	0x05, 0x72, 0x69, 0x67, 0x68, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x62, 0x6f, 0x74, 0x74, 0x6f, 0x6d,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x06, 0x62, 0x6f, 0x74, 0x74, 0x6f, 0x6d, 0x22, 0xeb,
+	0x02, 0x0a, 0x0f, 0x4c, 0x61, 0x79, 0x6f, 0x75, 0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
+	0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x61, 0x6c,
+	0x69, 0x67, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x61, 0x6c, 0x69, 0x67, 0x6e,
+	0x12, 0x14, 0x0a, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x46,
+	0x0a, 0x07, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x0d, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x2c, 0x2e, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x64, 0x69, 0x67, 0x2e, 0x75, 0x69, 0x61, 0x70, 0x69,
+	0x2e, 0x4c, 0x61, 0x79, 0x6f, 0x75, 0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72,
+	0x2e, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x6f,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x33, 0x0a, 0x04, 0x72, 0x6f, 0x77, 0x73, 0x18, 0x0e,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x64, 0x69, 0x67, 0x2e,
+	0x75, 0x69, 0x61, 0x70, 0x69, 0x2e, 0x4c, 0x61, 0x79, 0x6f, 0x75, 0x74, 0x43, 0x6f, 0x6e, 0x74,
+	0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x04, 0x72, 0x6f, 0x77, 0x73, 0x12, 0x33, 0x0a, 0x04, 0x63,
+	0x6f, 0x6c, 0x73, 0x18, 0x0f, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x64, 0x69, 0x67, 0x2e, 0x75, 0x69, 0x61, 0x70, 0x69, 0x2e, 0x4c, 0x61, 0x79, 0x6f, 0x75,
+	0x74, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x52, 0x04, 0x63, 0x6f, 0x6c, 0x73,
+	0x1a, 0x3a, 0x0a, 0x0c, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79,
+	0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b,
+	0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x46, 0x0a, 0x08,
+	0x54, 0x65, 0x6d, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x12, 0x0a, 0x04, 0x68, 0x74, 0x6d, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
+	0x68, 0x74, 0x6d, 0x6c, 0x42, 0x0c, 0x48, 0x03, 0x5a, 0x08, 0x2e, 0x2f, 0x3b, 0x75, 0x69, 0x61,
+	0x70, 0x69, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -90,16 +311,22 @@ func file_uiapi_proto_rawDescGZIP() []byte {
 	return file_uiapi_proto_rawDescData
 }
 
-var file_uiapi_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_uiapi_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_uiapi_proto_goTypes = []interface{}{
-	(*LayoutEntry)(nil), // 0: valuedig.uiapi.LayoutEntry
+	(*LayoutPos)(nil),       // 0: valuedig.uiapi.LayoutPos
+	(*LayoutContainer)(nil), // 1: valuedig.uiapi.LayoutContainer
+	(*Template)(nil),        // 2: valuedig.uiapi.Template
+	nil,                     // 3: valuedig.uiapi.LayoutContainer.OptionsEntry
 }
 var file_uiapi_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: valuedig.uiapi.LayoutContainer.options:type_name -> valuedig.uiapi.LayoutContainer.OptionsEntry
+	1, // 1: valuedig.uiapi.LayoutContainer.rows:type_name -> valuedig.uiapi.LayoutContainer
+	1, // 2: valuedig.uiapi.LayoutContainer.cols:type_name -> valuedig.uiapi.LayoutContainer
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_uiapi_proto_init() }
@@ -109,7 +336,31 @@ func file_uiapi_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_uiapi_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LayoutEntry); i {
+			switch v := v.(*LayoutPos); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_uiapi_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LayoutContainer); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_uiapi_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Template); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -127,7 +378,7 @@ func file_uiapi_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_uiapi_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

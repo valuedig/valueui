@@ -7,7 +7,26 @@ option go_package = "./;uiapi";
 
 // import "google/protobuf/any.proto";
 
-message LayoutEntry {
-  string name = 1;
+message LayoutPos {
+  uint32 left = 2;
+  uint32 top = 3;
+  uint32 right = 4;
+  uint32 bottom = 5;
 }
 
+message LayoutContainer {
+  string kind = 1;
+  string name = 2;
+  string align = 3;
+  string width = 4;
+  string height = 5;
+  map<string, string> options = 13;
+  repeated LayoutContainer rows = 14;
+  repeated LayoutContainer cols = 15;
+}
+
+message Template {
+  string kind = 1;
+  string name = 2;
+  string html = 3;
+}

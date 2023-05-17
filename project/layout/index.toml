@@ -1,0 +1,17 @@
+kind = "LayoutContainer"
+name = "index"
+
+
+[[cols]]
+name = "navbar"
+width = "4rem"
+
+
+[[cols]]
+name = "menu"
+width = "100rem"
+
+
+[[cols]]
+name = "body"
+width = "auto"
