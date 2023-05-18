@@ -1,6 +1,8 @@
 kind = "LayoutContainer"
 name = "index"
 
+[row]
+width = "auto"
 
 [[cols]]
 name = "navbar"

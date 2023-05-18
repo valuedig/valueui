@@ -1,5 +1,7 @@
-<div col="row">
+<div id="valueui-row-{[=it.name]}" class="valueui-row {[=it._css]}">
     {[~ it.cols :col]}
-    <div id="col-{[=col.name]}" class="col">{[=col.name]} {[=col.width]}</div>
+    <div id="valueui-col-{[=it.name]}-{[=col.name]}" class="valueui-col {[=col._css]}">
+        {[=col.name]} {[=col.width]}
+    </div>
     {[~]}
 </div>

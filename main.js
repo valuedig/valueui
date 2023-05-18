@@ -1945,6 +1945,7 @@
     var template = valueui.template;
 
     var _templateHTMLFlush = function (options, txt) {
+        console.log("\ntemplate render " + txt + "\n");
         if (options.prepend) {
             $("#" + options.dstid).prepend(txt);
         } else if (options.append) {
