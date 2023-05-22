@@ -1,0 +1,23 @@
+kind = "Viewlet"
+name = "index"
+
+[args]
+key = "value"
+
+[template]
+name = "index-layout"
+[template.layout]
+
+[[template.layout.cols]]
+name = "navbar"
+width = "4rem"
+
+
+[[template.layout.cols]]
+name = "menu"
+width = "200px"
+
+
+[[template.layout.cols]]
+name = "body"
+width = "auto"

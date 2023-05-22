@@ -27,7 +27,7 @@
         basepath: "/",
         uipath: "~/valueui",
         inited: false,
-        viewx: {},
+        viewlet: {},
         cookie: {},
         session: {},
         storage: {},
@@ -86,6 +86,7 @@
             valueui.uipath + "/bs/js/bootstrap.js",
             valueui.uipath + "/bs/css/bootstrap.css",
             valueui.uipath + "/main.css",
+            valueui.uipath + "/main-v2.css",
         ];
 
         seajs.use(mods, function () {
@@ -144,7 +145,7 @@
 
     valueui.main = function () {
         valueui.use(function () {
-            valueui.viewx.layout("body-content", "layout/index");
+            valueui.viewlet.action("body-content", "index");
         });
     };
 
@@ -157,23 +158,24 @@
         return ep;
     };
 
-    var viewx = valueui.viewx;
+    var viewlet = valueui.viewlet;
 
-    viewx.layout = function (id, name) {
-        var url = valueui.basepath + "/api/v2/layout/fetch?name=" + name + ".toml";
+    viewlet.action = function (id, name) {
+        var url = valueui.basepath + "/api/v2/viewlet/fetch?name=viewlet/" + name + ".toml";
 
-        var ep = valueui.newEventProxy("data", "tpl", function (data, tpl) {
-            var msg = valueui.utilx.kindCheck(data, "LayoutContainer");
+        var ep = valueui.newEventProxy("data", function (data) {
+            var msg = valueui.utilx.kindCheck(data, "Viewlet");
             if (msg) {
                 return valueui.alert.open("error", msg);
             }
-            msg = valueui.utilx.kindCheck(tpl, "Template");
-            if (msg) {
-                return valueui.alert.open("error", msg);
+            if (!data.template || !data.template.html) {
+                return valueui.alert.open("error", "no template found");
             }
+
+			console.log(data.template.html.html);
 
             valueui.template.render({
-                tplsrc: tpl.html,
+                tplsrc: data.template.html.html,
                 dstid: id,
                 data: data,
             });
@@ -187,9 +189,9 @@
             callback: ep.done("data"),
         });
 
-        valueui.utilx.ajax(valueui.basepath + "/api/v2/layout/fetch?name=template/layout.html", {
-            callback: ep.done("tpl"),
-        });
+        // valueui.utilx.ajax(valueui.basepath + "/api/v2/viewlet/fetch?name=template/layout.html", {
+        //     callback: ep.done("tpl"),
+        // });
     };
 
     var job = valueui.job;

@@ -1,4 +1,4 @@
-kind = "LayoutContainer"
+kind = "Template"
 name = "index"
 
 [row]

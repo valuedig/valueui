@@ -1,0 +1,42 @@
+:root {
+    --vui-box-gap: 1.5rem;
+}
+
+.valueui-container {
+    width: 100%;
+    padding: 0;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.valueui-container-gap {
+    padding-right: calc(var(--vui-box-gap) * 0.5);
+    padding-left: calc(var(--vui-box-gap) * 0.5);
+}
+
+.valueui-row {
+    display: flex;
+    flex-wrap: wrap;
+    __margin-top: calc(-1 * var(--vui-box-gap));
+    __margin-right: calc(-0.5 * var(--vui-box-gap));
+    __margin-left: calc(-0.5 * var(--vui-box-gap));
+}
+
+.valueui-row > * {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    __padding-right: calc(var(--vui-box-gap) * 0.5);
+    __padding-left: calc(var(--vui-box-gap) * 0.5);
+    __margin-top: var(--vui-box-gap);
+}
+
+.valueui-col {
+    __flex: 1 0 0%;
+    border: 1px solid #ccc;
+}
+
+.valueui-col-auto {
+    flex: 0 0 auto;
+    width: auto;
+}

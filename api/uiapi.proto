@@ -7,26 +7,71 @@ option go_package = "./;uiapi";
 
 // import "google/protobuf/any.proto";
 
-message LayoutPos {
-  uint32 left = 2;
-  uint32 top = 3;
-  uint32 right = 4;
-  uint32 bottom = 5;
-}
-
-message LayoutContainer {
-  string kind = 1;
-  string name = 2;
+message TemplateLayout {
+  string name = 1;
   string align = 3;
   string width = 4;
   string height = 5;
   map<string, string> options = 13;
-  repeated LayoutContainer rows = 14;
-  repeated LayoutContainer cols = 15;
+  repeated TemplateLayout rows = 14;
+  repeated TemplateLayout cols = 15;
+}
+
+message TemplateCard {
+  string name = 2;
+}
+
+message TemplateHtml {
+  string file = 1;
+  string html = 2;
 }
 
 message Template {
   string kind = 1;
   string name = 2;
-  string html = 3;
+
+  TemplateLayout layout = 9;
+  TemplateCard card = 10;
+  TemplateHtml html = 31;
+}
+
+message ModelSpec {
+  enum FieldType {
+    UNSPEC = 0;
+    BOOL = 1;
+    INT = 2;
+    UINT = 3;
+    FLOAT = 4;
+    STRING = 6;
+    BYTES = 7;  // Encoded as a base64-encoded `string`
+    ARRAY = 8;
+    JSON = 11;  // Encoded as a JSON-formatted `string`
+  }
+
+  message Field {
+    string name = 1;
+    FieldType type = 2;
+    string default_value = 3;
+    uint32 length = 4;
+  }
+
+  string kind = 1;
+  string version = 2;
+  string name = 3;
+  string description = 4;
+
+  repeated Field fields = 5;
+}
+
+message Datalet {
+  string name = 1;
+}
+
+message Viewlet {
+  string kind = 1;
+  string name = 2;
+
+  map<string, string> args = 3;
+
+  Template template = 6;
 }

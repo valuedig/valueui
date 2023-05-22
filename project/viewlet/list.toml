@@ -1,0 +1,10 @@
+kind = "Viewlet"
+name = "list"
+
+[args]
+key = "value"
+
+[template]
+name = "index-layout"
+[template.html]
+file = "layout.html"

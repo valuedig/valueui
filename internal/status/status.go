@@ -7,23 +7,23 @@ import (
 )
 
 var (
-	Layouts = layoutSets{
+	Assets = sets{
 		items: map[string]interface{}{},
 	}
 )
 
-type layoutSets struct {
+type sets struct {
 	mu    sync.Mutex
 	items map[string]interface{}
 }
 
-func (it *layoutSets) Sync(name string, v interface{}) {
+func (it *sets) Sync(name string, v interface{}) {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	it.items[strings.TrimLeft(name, "/")] = v
 }
 
-func (it *layoutSets) Get(name string) interface{} {
+func (it *sets) Get(name string) interface{} {
 	it.mu.Lock()
 	defer it.mu.Unlock()
 	if v, ok := it.items[strings.TrimLeft(name, "/")]; ok {

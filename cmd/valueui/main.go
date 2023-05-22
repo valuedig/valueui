@@ -32,10 +32,10 @@ import (
 )
 
 var (
-	projectPath = "./project/"
-	tplFileRx   = regexp.MustCompile(`(.*)(\.html)$`)
-	dslFileRx   = regexp.MustCompile(`(.*)(\.toml)$`)
-	err         error
+	projectPath   = "./project/"
+	tplHtmlRx     = regexp.MustCompile(`template\/(.*)(\.html)$`)
+	viewletFileRx = regexp.MustCompile(`viewlet\/(.*)(\.toml)$`)
+	err           error
 )
 
 func templateRefresh() error {
@@ -46,23 +46,53 @@ func templateRefresh() error {
 
 	load := func(path string) error {
 
-		if tplFileRx.MatchString(path) {
+		relpath := path[len(projectPath)+1:]
+
+		hlog.Printf("info", "asset %s", relpath)
+
+		if tplHtmlRx.MatchString(path) {
 			if b, err := ioutil.ReadFile(path); err != nil {
 				return err
 			} else {
-				status.Layouts.Sync(path[len(projectPath):], &uiapi.Template{
-					Kind: "Template",
+				status.Assets.Sync(relpath, &uiapi.TemplateHtml{
+					File: relpath,
 					Html: string(b),
 				})
 			}
-		} else if dslFileRx.MatchString(path) {
-			var item uiapi.LayoutContainer
+		} else if viewletFileRx.MatchString(relpath) {
+			var item uiapi.Viewlet
 			if err := htoml.DecodeFromFile(path, &item); err == nil {
-				hlog.Printf("info", "layout %s, kind %s, name %v",
-					path[len(projectPath):], item.Kind, item.Name)
-				status.Layouts.Sync(path[len(projectPath):], &item)
+				hlog.Printf("info", "asset %s, kind %s, name %v",
+					relpath, item.Kind, item.Name)
+				status.Assets.Sync(relpath, &item)
+			} else {
+				hlog.Printf("warn", "asset %s, err %s", relpath, err.Error())
+			}
+
+			if false {
+				item.Kind = "Viewlet"
+				item.Name = "index"
+				item.Args = map[string]string{
+					"key": "value",
+				}
+
+				item.Template = &uiapi.Template{
+					Layout: &uiapi.TemplateLayout{
+						Align: "auto",
+					},
+				}
+				htoml.EncodeToFile(&item, path)
 			}
 		}
+
+		/** else if dslFileRx.MatchString(path) {
+			var item uiapi.TemplateLayout
+			if err := htoml.DecodeFromFile(path, &item); err == nil {
+				hlog.Printf("info", "asset %s, kind %s, name %v",
+					relpath, item.Kind, item.Name)
+				status.Assets.Sync(relpath, &item)
+			}
+		} */
 		return nil
 	}
 
@@ -96,8 +126,8 @@ func templateRefresh() error {
 
 			// hlog.Printf("info", "fsnotify event hit %v, file %v", event.Op, event.Name)
 
-			if !ok || (!dslFileRx.MatchString(event.Name) &&
-				!tplFileRx.MatchString(event.Name)) {
+			if !ok || (!viewletFileRx.MatchString(event.Name) &&
+				!tplHtmlRx.MatchString(event.Name)) {
 				continue
 			}
 
