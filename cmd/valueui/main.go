@@ -15,6 +15,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/fs"
 	"io/ioutil"
 	"path/filepath"
@@ -25,6 +26,7 @@ import (
 	"github.com/hooto/hlog4g/hlog"
 	"github.com/hooto/htoml4g/htoml"
 	"github.com/hooto/httpsrv"
+	"gopkg.in/yaml.v3"
 
 	"github.com/valuedig/valueui/internal/status"
 	"github.com/valuedig/valueui/internal/websrv"
@@ -35,6 +37,8 @@ var (
 	projectPath   = "./project/"
 	tplHtmlRx     = regexp.MustCompile(`template\/(.*)(\.html)$`)
 	viewletFileRx = regexp.MustCompile(`viewlet\/(.*)(\.toml)$`)
+	dataletFileRx = regexp.MustCompile(`datalet\/(.*)(\.toml)$`)
+	modelFileRx   = regexp.MustCompile(`model\/(.*)(\.toml)$`)
 	err           error
 )
 
@@ -76,12 +80,52 @@ func templateRefresh() error {
 					"key": "value",
 				}
 
-				item.Template = &uiapi.Template{
-					Layout: &uiapi.TemplateLayout{
-						Align: "auto",
-					},
+				if item.Template == nil {
+					item.Template = &uiapi.TemplateSpec{
+						Layout: &uiapi.TemplateLayout{
+							Align: "auto",
+						},
+					}
 				}
+
+				if len(item.Template.Layout.Cols) > 2 {
+					item.Template.Layout.Cols[1].Options = map[string]string{
+						"min-width": "100px",
+						"max-width": "200px",
+					}
+				}
+
 				htoml.EncodeToFile(&item, path)
+			}
+
+			if true {
+				js, _ := json.MarshalIndent(item, "", "  ")
+				ioutil.WriteFile(path[:len(path)-4]+"json", js, 0640)
+
+				yl, _ := yaml.Marshal(&item)
+				ioutil.WriteFile(path[:len(path)-4]+"yaml", yl, 0640)
+			}
+		} else if dataletFileRx.MatchString(relpath) {
+			var item uiapi.DataletSpec
+			if err := htoml.DecodeFromFile(path, &item); err == nil {
+				hlog.Printf("info", "asset %s, kind %s, name %v",
+					relpath, item.Kind, item.Name)
+				status.Assets.Sync(relpath, &item)
+			} else {
+				hlog.Printf("warn", "asset %s, err %s", relpath, err.Error())
+			}
+		} else if modelFileRx.MatchString(relpath) {
+			var item uiapi.ModelSpec
+			err := htoml.DecodeFromFile(path, &item)
+			if err == nil {
+				err = item.Valid()
+			}
+			if err == nil {
+				hlog.Printf("info", "asset %s, kind %s, name %v",
+					relpath, item.Kind, item.Name)
+				status.Assets.Sync(relpath, &item)
+			} else {
+				hlog.Printf("warn", "asset %s, err %s", relpath, err.Error())
 			}
 		}
 

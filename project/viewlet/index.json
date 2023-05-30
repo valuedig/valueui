@@ -1,0 +1,29 @@
+{
+  "kind": "Viewlet",
+  "name": "index",
+  "args": {
+    "key": "value"
+  },
+  "template": {
+    "name": "index-layout",
+    "layout": {
+      "height": "100vh",
+      "cols": [
+        {
+          "name": "menu",
+          "width": "180px,200px"
+        },
+        {
+          "name": "body",
+          "width": "auto"
+        }
+      ]
+    }
+  },
+  "output": "body-content",
+  "next_viewlets": [
+    {
+      "name": "nav-menu"
+    }
+  ]
+}

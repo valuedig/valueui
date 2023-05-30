@@ -1,0 +1,7 @@
+kind = "DataletSpec"
+name = "nav-menu"
+
+[action]
+
+[action.search]
+model = "menu"

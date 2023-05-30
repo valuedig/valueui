@@ -41,7 +41,7 @@ func (c Index) IndexAction() {
     window.onload = valueui.main();
   </script>
 </head>
-<body id="body-content">loading</body>
+<body id="valueui-body-content">loading</body>
 </html>
 `)
 }

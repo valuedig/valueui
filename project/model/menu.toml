@@ -1,0 +1,17 @@
+kind = "ModelSpec"
+name = "menu"
+
+[[fields]]
+name = "name"
+type = 6
+
+[[fields]]
+name = "title"
+type = 6
+
+[[default_rows]]
+values = ["index", "Home"]
+
+[[default_rows]]
+values = ["list", "List"]
+

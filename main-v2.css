@@ -1,5 +1,7 @@
 :root {
     --vui-box-gap: 1.5rem;
+    --vui-link-color: #212529;
+    --vui-link-color-hover: #000000;
 }
 
 .valueui-container {
@@ -9,14 +11,35 @@
     margin-left: auto;
 }
 
-.valueui-container-gap {
-    padding-right: calc(var(--vui-box-gap) * 0.5);
+.valueui-gap {
+    padding-top: calc(var(--vui-box-gap) * 0.5);
+    padding-right: 0;
+    padding-bottom: 0;
     padding-left: calc(var(--vui-box-gap) * 0.5);
+}
+
+.valueui-gap-box {
+    padding-left: 0;
+    padding-top: 0;
+    padding-right: calc(var(--vui-box-gap) * 0.5);
+    padding-bottom: calc(var(--vui-box-gap) * 0.5);
+}
+
+.valueui-gap-box > div,
+.valueui-gap-box > li,
+.valueui-gap-box > a,
+.valueui-gap-item {
+    margin-left: calc(var(--vui-box-gap) * 0.5);
+    margin-top: calc(var(--vui-box-gap) * 0.5);
+    margin-right: 0;
+    margin-bottom: 0;
 }
 
 .valueui-row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
     __margin-top: calc(-1 * var(--vui-box-gap));
     __margin-right: calc(-0.5 * var(--vui-box-gap));
     __margin-left: calc(-0.5 * var(--vui-box-gap));
@@ -37,6 +60,37 @@
 }
 
 .valueui-col-auto {
-    flex: 0 0 auto;
+    flex: 1 0 auto;
     width: auto;
+}
+
+.valueui-nav-item {
+    __background-color: rgba(0, 0, 0, 0.03);
+    __padding: calc(var(--vui-box-gap) * 0.5);
+    border-radius: 3px;
+    __line-height: 150%;
+}
+
+.valueui-nav-link {
+    __padding: calc(var(--vui-box-gap) * 0.25) calc(var(--vui-box-gap) * 0.5);
+    __line-height: 150%;
+}
+
+.valueui-nav-item a {
+    color: var(--vui-link-color);
+    text-decoration: none;
+}
+
+.valueui-nav-item a:hover {
+    color: var(--vui-link-color-hover);
+    text-decoration: none;
+}
+
+.valueui-nav-item.active {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.valueui-nav-item:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.03);
 }

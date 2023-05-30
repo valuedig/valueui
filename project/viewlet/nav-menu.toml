@@ -1,0 +1,13 @@
+kind = "Viewlet"
+name = "nav-menu"
+
+output = "menu"
+
+[template]
+name = "nav-menu"
+
+[template.nav]
+display = "flex-column"
+
+[datalet]
+name = "nav-menu"

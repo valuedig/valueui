@@ -1,0 +1,8 @@
+kind: Viewlet
+name: list
+args:
+    key: value
+template:
+    name: index-layout
+    html:
+        file: layout.html

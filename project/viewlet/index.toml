@@ -1,6 +1,8 @@
 kind = "Viewlet"
 name = "index"
 
+output = "body-content"
+
 [args]
 key = "value"
 
@@ -8,16 +10,15 @@ key = "value"
 name = "index-layout"
 [template.layout]
 
-[[template.layout.cols]]
-name = "navbar"
-width = "4rem"
-
+height = "100vh"
 
 [[template.layout.cols]]
 name = "menu"
-width = "200px"
-
+width = "180px,200px"
 
 [[template.layout.cols]]
 name = "body"
 width = "auto"
+
+[[next_viewlets]]
+name = "nav-menu"

@@ -1,0 +1,9 @@
+kind: Viewlet
+name: nav-menu
+template:
+    name: nav-menu
+    nav:
+        display: flex-column
+datalet:
+    name: nav-menu
+output: menu
