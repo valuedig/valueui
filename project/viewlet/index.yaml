@@ -3,14 +3,39 @@ name: index
 args:
     key: value
 template:
+    kind: ""
     name: index-layout
     layout:
+        name: ""
+        align: ""
+        width: ""
         height: 100vh
+        options: {}
+        rows: []
         cols:
             - name: menu
+              align: ""
               width: 180px,200px
+              height: ""
+              options: {}
+              rows: []
+              cols: []
             - name: body
+              align: ""
               width: auto
+              height: ""
+              options: {}
+              rows: []
+              cols: []
+    nav: null
+    html: null
+datalet: null
 output: body-content
-next_viewlets:
-    - name: nav-menu
+nextviewlets:
+    - kind: ""
+      name: nav-menu
+      args: {}
+      template: null
+      datalet: null
+      output: ""
+      nextviewlets: []

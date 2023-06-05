@@ -68,6 +68,14 @@ message ModelSpec {
     JSON = 11;  // Encoded as a JSON-formatted `string`
   }
 
+  /**
+  message Term {
+    string ns = 1;
+    string id = 2;
+    string title = 3;
+  }
+  */
+
   message Field {
     string name = 1;
     FieldType type = 2;
@@ -75,9 +83,13 @@ message ModelSpec {
     uint32 length = 4;
   }
 
+  message Item {
+    repeated Field fields = 5;
+  }
+
   message Row {
     repeated string values = 9;
-	map<string, google.protobuf.Value> fields = 10;
+    map<string, google.protobuf.Value> fields = 10;
   }
 
   string kind = 1;

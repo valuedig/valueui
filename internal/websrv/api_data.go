@@ -4,7 +4,7 @@ import (
 	"github.com/hooto/hlog4g/hlog"
 	"github.com/hooto/httpsrv"
 
-	"google.golang.org/protobuf/types/known/structpb"
+	// "google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/valuedig/valueui/internal/status"
 	"github.com/valuedig/valueui/pkg/uiapi"
