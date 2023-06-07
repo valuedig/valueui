@@ -28,6 +28,7 @@ template:
               rows: []
               cols: []
     nav: null
+    table: null
     html: null
 datalet: null
 output: body-content

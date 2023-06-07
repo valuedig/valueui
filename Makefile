@@ -7,10 +7,10 @@ BINCOLOR="\033[37;1m"
 ENDCOLOR="\033[0m"
 
 PROTOC_CMD = protoc
-PROTOC_ARGS = --proto_path=./api/ --go_opt=paths=source_relative --go_out=./pkg/uiapi/ --go-grpc_out=./pkg/uiapi/ ./api/uiapi.proto
+PROTOC_ARGS = --proto_path=./api/ --go_opt=paths=source_relative --go_out=./pkg/uiapi/ --go-grpc_out=./pkg/uiapi/ ./api/uiapi.proto ./api/uiapi_data.proto
 
 HTOML_TAG_FIX_CMD = htoml-tag-fix
-HTOML_TAG_FIX_ARGS = pkg/uiapi/uiapi.pb.go
+HTOML_TAG_FIX_ARGS = pkg/uiapi/
 
 
 ifndef V

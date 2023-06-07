@@ -14,4 +14,3 @@ values = ["index", "Home"]
 
 [[default_rows]]
 values = ["list", "List"]
-

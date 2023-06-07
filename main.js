@@ -274,7 +274,7 @@
 				if (err) {
 					return valueui.alert.open("error", err);
 				}
-				var msg = valueui.utilx.kindCheck(data, "DataletRunResponse");
+				var msg = valueui.utilx.kindCheck(data, "DataletResults");
 				if (msg) {
 					return valueui.alert.open("error", msg);
 				}

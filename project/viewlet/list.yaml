@@ -7,6 +7,7 @@ template:
     name: index-layout
     layout: null
     nav: null
+    table: null
     html:
         file: layout.html
         html: ""

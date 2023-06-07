@@ -18,7 +18,7 @@ func (c Datalet) RunAction() {
 	c.AutoRender = false
 	c.Response.Out.Header().Set("Cache-Control", "no-cache")
 
-	var resp uiapi.DataletRunResponse
+	var resp uiapi.DataletResults
 	defer c.RenderJson(&resp)
 
 	item := status.Assets.Get(c.Params.Get("name"))
@@ -33,7 +33,7 @@ func (c Datalet) RunAction() {
 		return
 	}
 
-	resp.Kind = "DataletRunResponse"
+	resp.Kind = "DataletResults"
 
 	if datalet.Action != nil {
 		switch {

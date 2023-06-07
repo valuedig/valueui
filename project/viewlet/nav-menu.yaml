@@ -8,6 +8,7 @@ template:
     nav:
         display: flex-column
         item: []
+    table: null
     html: null
 datalet:
     kind: ""

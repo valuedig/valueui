@@ -5,7 +5,7 @@ package valuedig.uiapi;
 option optimize_for = LITE_RUNTIME;
 option go_package = "./;uiapi";
 
-import "google/protobuf/struct.proto";
+import "uiapi_data.proto";
 
 // frontend components
 message Viewlet {
@@ -27,6 +27,7 @@ message TemplateSpec {
 
   TemplateLayout layout = 9;
   TemplateNav nav = 10;
+  TemplateTable table = 11;
   TemplateHtml html = 31;
 }
 
@@ -54,102 +55,6 @@ message TemplateHtml {
   string html = 2;
 }
 
-// backend components
-message ModelSpec {
-  enum FieldType {
-    UNSPEC = 0;
-    BOOL = 1;
-    INT = 2;
-    UINT = 3;
-    FLOAT = 4;
-    STRING = 6;
-    BYTES = 7;  // Encoded as a base64-encoded `string`
-    ARRAY = 8;
-    JSON = 11;  // Encoded as a JSON-formatted `string`
-  }
-
-  /**
-  message Term {
-    string ns = 1;
-    string id = 2;
-    string title = 3;
-  }
-  */
-
-  message Field {
-    string name = 1;
-    FieldType type = 2;
-    string default_value = 3;
-    uint32 length = 4;
-  }
-
-  message Item {
-    repeated Field fields = 5;
-  }
-
-  message Row {
-    repeated string values = 9;
-    map<string, google.protobuf.Value> fields = 10;
-  }
-
-  string kind = 1;
-  string version = 2;
-  string name = 3;
-  string description = 4;
-
-  repeated Field fields = 5;
-
-  repeated Row default_rows = 9;
-}
-
-message DataResult {
-  string name = 1;
-  ModelSpec spec = 2;
-  repeated ModelSpec.Row rows = 9;
-}
-
-message DataRead {
-  message Filter {
-    string name = 1;
-    string value = 3;
-  }
-  string model = 2;
-  repeated string fields = 3;
-  repeated Filter filters = 4;
-  uint32 limit = 5;
-}
-
-message DataWrite {
-  message Filter {
-    string name = 1;
-    string value = 3;
-  }
-  string model = 2;
-  repeated string fields = 3;
-  repeated string values = 4;
-  repeated Filter filters = 5;
-}
-
-message DataAction {
-  // string name = 1;
-  DataRead search = 2;
-  DataWrite insert = 3;
-  DataWrite update = 4;
-  DataWrite upsert = 5;
-  DataWrite delete = 6;
-}
-
-message DataletSpec {
-  string kind = 1;
-  string name = 2;
-
-  DataAction action = 8;
-
-  // repeated DataAction actions = 9;
-}
-
-message DataletRunResponse {
-  string kind = 1;
-  DataResult dataset = 8;
-  repeated DataResult datasets = 9;
+message TemplateTable {
+  // TODO
 }

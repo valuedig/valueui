@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package valuedig.uiapi;
+
+option optimize_for = LITE_RUNTIME;
+option go_package = "./;uiapi";
+
+// import "google/protobuf/struct.proto";
+
+// backend components
+message ModelSpec {
+  // OK
+  enum FieldType {
+    UNSPEC = 0;
+    BOOL = 1;
+    INT = 2;
+    UINT = 3;
+    FLOAT = 4;
+    STRING = 6;
+    BYTES = 7;  // Encoded as a base64-encoded `string`
+    ARRAY = 8;
+    JSON = 11;  // Encoded as a JSON-formatted `string`
+    TERM = 12;
+  }
+
+  // OK
+  message Field {
+    string name = 1;
+    FieldType type = 2;
+    string default_value = 3;
+    uint32 length = 4;                 // int, uint
+    repeated uint32 decimal_size = 5;  // [precision, scale]
+    string term_ns = 6;
+  }
+
+  message Term {
+    string ns = 1;  // default to `global`
+    uint64 id = 2;
+    string name = 3;
+    string display_name = 4;
+  }
+
+  // OK
+  message Row {
+    string id = 1;
+    repeated string values = 9;
+    // map<string, google.protobuf.Value> fields = 10;
+  }
+
+  string kind = 1;
+  string version = 2;
+  string name = 3;
+  // string description = 4;
+
+  repeated Field fields = 5;
+
+  repeated Row default_rows = 9;
+}
+
+message DataResult {
+  string name = 1;
+  ModelSpec spec = 2;
+  repeated ModelSpec.Row rows = 9;
+}
+
+// ref
+// https://github.com/go-rel/rel/blob/master/query.go
+message DataRead {
+  message Filter {
+    enum Type {
+      UnSpec = 0;
+      AND = 1;
+      OR = 2;
+    };
+    Type type = 1;
+    string name = 2;
+    string value = 3;
+    repeated Filter inner = 4;
+  }
+  message SortFilter {
+    enum Type {
+      UnSpec = 0;
+      ASC = 1;
+      DESC = 2;
+    };
+    Type type = 1;
+    string field = 2;
+    optional string value = 3;
+  }
+  string model = 1;
+  repeated string fields = 2;
+  optional Filter filter = 4;
+  repeated SortFilter sort = 6;
+  string offset = 7;
+  uint32 limit = 8;
+}
+
+message DataWrite {
+  string model = 2;
+  repeated string fields = 3;
+  repeated string values = 4;
+  DataRead.Filter filter = 5;
+}
+
+message DataAction {
+  // string name = 1;
+  DataRead search = 2;
+  DataWrite insert = 3;
+  DataWrite update = 4;
+  DataWrite upsert = 5;
+  DataWrite delete = 6;
+}
+
+message DataletSpec {
+  string kind = 1;
+  string name = 2;
+
+  DataAction action = 8;
+
+  // repeated DataAction actions = 9;
+}
+
+message DataletResults {
+  string kind = 1;
+  DataResult dataset = 8;
+  repeated DataResult datasets = 9;
+}
