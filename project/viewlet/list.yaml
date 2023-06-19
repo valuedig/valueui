@@ -3,14 +3,6 @@ name: list
 args:
     key: value
 template:
-    kind: ""
     name: index-layout
-    layout: null
-    nav: null
-    table: null
     html:
         file: layout.html
-        html: ""
-datalet: null
-output: ""
-nextviewlets: []

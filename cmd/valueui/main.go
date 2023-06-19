@@ -30,6 +30,7 @@ import (
 
 	"github.com/valuedig/valueui/internal/status"
 	"github.com/valuedig/valueui/internal/websrv"
+	"github.com/valuedig/valueui/pkg/datax"
 	"github.com/valuedig/valueui/pkg/uiapi"
 )
 
@@ -106,7 +107,7 @@ func templateRefresh() error {
 				ioutil.WriteFile(path[:len(path)-4]+"yaml", yl, 0640)
 			}
 		} else if dataletFileRx.MatchString(relpath) {
-			var item uiapi.DataletSpec
+			var item datax.DataletSpec
 			if err := htoml.DecodeFromFile(path, &item); err == nil {
 				hlog.Printf("info", "asset %s, kind %s, name %v",
 					relpath, item.Kind, item.Name)
@@ -115,7 +116,7 @@ func templateRefresh() error {
 				hlog.Printf("warn", "asset %s, err %s", relpath, err.Error())
 			}
 		} else if modelFileRx.MatchString(relpath) {
-			var item uiapi.ModelSpec
+			var item datax.ModelSpec
 			err := htoml.DecodeFromFile(path, &item)
 			if err == nil {
 				err = item.Valid()

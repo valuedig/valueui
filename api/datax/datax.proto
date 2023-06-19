@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package valuedig.uiapi;
+package valuedig.datax;
 
 option optimize_for = LITE_RUNTIME;
-option go_package = "./;uiapi";
+option go_package = "github.com/valuedig/valueui/pkg/datax;datax";
 
-// import "google/protobuf/struct.proto";
+import "google/protobuf/struct.proto";
 
 // backend components
 message ModelSpec {
@@ -44,7 +44,7 @@ message ModelSpec {
   message Row {
     string id = 1;
     repeated string values = 9;
-    // map<string, google.protobuf.Value> fields = 10;
+    map<string, google.protobuf.Value> fields = 10;
   }
 
   string kind = 1;
@@ -57,10 +57,9 @@ message ModelSpec {
   repeated Row default_rows = 9;
 }
 
-message DataResult {
+message ModelSets {
   string name = 1;
-  ModelSpec spec = 2;
-  repeated ModelSpec.Row rows = 9;
+  repeated ModelSpec items = 9;
 }
 
 // ref
@@ -118,6 +117,13 @@ message DataletSpec {
   DataAction action = 8;
 
   // repeated DataAction actions = 9;
+}
+
+message DataResult {
+  string name = 1;
+  ModelSpec spec = 2;
+  repeated ModelSpec.Row rows = 9;
+  string error = 10;
 }
 
 message DataletResults {

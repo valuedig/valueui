@@ -1,18 +1,9 @@
 kind: Viewlet
 name: nav-menu
-args: {}
 template:
-    kind: ""
     name: nav-menu
-    layout: null
     nav:
         display: flex-column
-        item: []
-    table: null
-    html: null
 datalet:
-    kind: ""
     name: nav-menu
-    action: null
 output: menu
-nextviewlets: []

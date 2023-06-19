@@ -5,7 +5,7 @@ package valuedig.uiapi;
 option optimize_for = LITE_RUNTIME;
 option go_package = "./;uiapi";
 
-import "uiapi_data.proto";
+import "datax/datax.proto";
 
 // frontend components
 message Viewlet {
@@ -15,7 +15,7 @@ message Viewlet {
   map<string, string> args = 3;
 
   TemplateSpec template = 6;
-  DataletSpec datalet = 7;
+  valuedig.datax.DataletSpec datalet = 7;
   string output = 8;
 
   repeated Viewlet next_viewlets = 9;

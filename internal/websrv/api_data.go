@@ -7,7 +7,7 @@ import (
 	// "google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/valuedig/valueui/internal/status"
-	"github.com/valuedig/valueui/pkg/uiapi"
+	"github.com/valuedig/valueui/pkg/datax"
 )
 
 type Datalet struct {
@@ -18,7 +18,7 @@ func (c Datalet) RunAction() {
 	c.AutoRender = false
 	c.Response.Out.Header().Set("Cache-Control", "no-cache")
 
-	var resp uiapi.DataletResults
+	var resp datax.DataletResults
 	defer c.RenderJson(&resp)
 
 	item := status.Assets.Get(c.Params.Get("name"))
@@ -27,7 +27,7 @@ func (c Datalet) RunAction() {
 		return
 	}
 
-	datalet, ok := item.(*uiapi.DataletSpec)
+	datalet, ok := item.(*datax.DataletSpec)
 	if !ok {
 		hlog.Printf("info", "viewlet (%s) fetch fail : object type error", c.Params.Get("name"))
 		return
@@ -42,14 +42,14 @@ func (c Datalet) RunAction() {
 			if item == nil {
 				return
 			}
-			model, ok := item.(*uiapi.ModelSpec)
+			model, ok := item.(*datax.ModelSpec)
 			if !ok {
 				return
 			}
 			if len(model.DefaultRows) > 0 {
-				resp.Datasets = append(resp.Datasets, &uiapi.DataResult{
+				resp.Datasets = append(resp.Datasets, &datax.DataResult{
 					Name: datalet.Name,
-					Spec: &uiapi.ModelSpec{
+					Spec: &datax.ModelSpec{
 						Fields: model.Fields,
 					},
 					Rows: model.DefaultRows,
